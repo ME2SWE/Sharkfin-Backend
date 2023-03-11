@@ -1,0 +1,37 @@
+-- run 'createdb sharkfin' before anything in the terminal
+
+-- run \i ./database/schema.sql
+
+\c sharkfin
+
+CREATE TABLE IF NOT EXISTS users (
+  ID SERIAL PRIMARY KEY NOT NULL,
+  USERNAME TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS stocks (
+  ID SERIAL PRIMARY KEY NOT NULL,
+  SYMBOL TEXT NOT NULL,
+  RECORD_DATE DATE NOT NULL,
+  RECORD_TIME TIME NOT NULL,
+  LAST_PRICE INTEGER NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS portfolio (
+  ID SERIAL PRIMARY KEY NOT NULL,
+  USER_ID INTEGER REFERENCES USERS(ID),
+  SYMBOL_ID INTEGER REFERENCES STOCKS(ID),
+  RECORD_DATE DATE NOT NULL,
+  RECORD_TIME TIME NOT NULL,
+  QTY INTEGER NOT NULL,
+  AVG_COST INTEGER NOT NULL,
+  BUY_PWR INTEGER NOT NULL
+);
+
+SELECT setval('portfolio_id_seq', COALESCE((SELECT MAX(id) + 1 FROM portfolio), 1), false);
+SELECT setval('stocks_id_seq', COALESCE((SELECT MAX(id) + 1 FROM stocks), 1), false);
+
+CREATE INDEX idx_portfolio_id ON portfolio(id);
+CREATE INDEX idx_stocks_id ON stocks(id);
+
+\timing
