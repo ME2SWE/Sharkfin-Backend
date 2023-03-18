@@ -1,0 +1,28 @@
+{
+  "name": "sharkfin-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "npx nodemon --watch server/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BOC-Blue-Tide/Sharkfin-Backend.git"
+  },
+  "author": "Blue Tide",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/BOC-Blue-Tide/Sharkfin-Backend/issues"
+  },
+  "homepage": "https://github.com/BOC-Blue-Tide/Sharkfin-Backend#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.21"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "pg": "^8.10.0"
+  }
+}
