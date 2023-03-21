@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS users (
   firstname varchar NOT NULL,
   lastname varchar NOT NULL,
   email varchar NOT NULL,
-  profilepic_URL varchar,
+  profilepic_URL varchar
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -58,7 +58,7 @@ CREATE TABLE IF NOT EXISTS finances (
 CREATE TABLE IF NOT EXISTS performance (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id integer REFERENCES users(id),
-  quarter_rank integer NOT NULL,
+  quarter_rank integer NOT NULL
 );
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
