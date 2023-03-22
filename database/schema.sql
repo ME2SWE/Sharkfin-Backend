@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS portfoliodays (
 );
 
 COPY portfoliodays (user_id, symbol, time, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysmock.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfolioweeks (
   user_id INTEGER REFERENCES USERS(ID),
@@ -58,6 +58,9 @@ CREATE TABLE IF NOT EXISTS portfolioweeks (
   avg_cost DOUBLE PRECISION NOT NULL,
   buy_pwr DOUBLE PRECISION NOT NULL
 );
+
+COPY portfolioweeks (user_id, symbol, time, qty, avg_cost, buy_pwr)
+FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
 
 SELECT create_hypertable(
   'portfoliomins',

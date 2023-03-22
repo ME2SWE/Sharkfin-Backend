@@ -7,8 +7,8 @@ require('dotenv').config();
 
 module.exports = {
   getChart : async (req, res) => {
-    const user_id = req.query.user_id;
-    const timeWindow = req.query.timeWindow;
+    var user_id = req.query.user_id;
+    var timeWindow = req.query.timeWindow;
     const today = moment().day();
     const todayDate = moment().format().slice(0,10);
     if (today === 6) {
@@ -39,7 +39,6 @@ module.exports = {
     });
 
     var timeObj = portfolioHelper.handleTimeFrame(timeWindow);
-    console.log(timeObj.startTime);
     //Get Stock History from Alpaca
     var alpacaMultiBarsURL = `${process.env.ALPACA_URL}/stocks/bars`;
        var alpacaConfigs = {
@@ -68,7 +67,11 @@ module.exports = {
   },
 
   getAllocationAndPosition : async (req, res) => {
-    const user_id = req.params.user_id || req.query.user_id;
+    if (req.params.length === 0) {
+      var user_id = req.query.user_id;
+    } else {
+      var user_id = req.params.user_id;
+    };
     var getAllocationQuery = getQueries.getAllocation(user_id);
     var endDate = moment.utc().subtract(15,'minutes').format();
     var startDate = moment.utc().subtract(1,'days').format();
