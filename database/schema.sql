@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS users (
   profilepic_URL varchar
 );
 
--- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
+-- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 
 CREATE TABLE IF NOT EXISTS friendlist (
   id SERIAL PRIMARY KEY NOT NULL,
