@@ -1,3 +1,5 @@
 user_id,symbol,qty,avg_cost,buy_pwr
-1,AAPL,7,9.85,68.95
-1,GOOGL,70,3.48,243.60
+1,TSLA,66,81.2,183
+2,TSLA,90,40.1,774
+1,AAPL,99,72,183
+2,AAPL,14,30.7,774
