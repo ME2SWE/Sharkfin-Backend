@@ -23,6 +23,9 @@ app.post('/transactions', controllers.postTransaction);
 app.get('/pchart', controllers.getChart);
 app.get('/pallocation', controllers.getAllocationAndPosition);
 
+//Finances
+app.post('/finances', controllers.postFinances);
+
 
 // setInterval(async function() {
 //   var date = moment();
