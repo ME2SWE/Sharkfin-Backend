@@ -118,11 +118,13 @@ CREATE TABLE IF NOT EXISTS finances (
   user_id integer REFERENCES users(id),
   transaction_type trans_type,
   amount numeric NOT NULL,
+  net_deposits numeric NOT NULL,
   avail_balance numeric,
   datetime TIMESTAMP DEFAULT NOW()
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
+
 
 CREATE TABLE IF NOT EXISTS performance (
   id SERIAL PRIMARY KEY NOT NULL,

@@ -124,12 +124,15 @@ module.exports = {
     })
   },
   postTransaction: (req, res) => {
-    console.log(req.body);
+    // console.log(req);
+    // console.log(req.body);
     pool.query(dbTransactions.dbPostTransaction(req.body))
     .then((result) => {
+      console.log(result);
       res.end();
     })
     .catch((err) => {
+      console.log(err);
       res.send(err);
     })
   }
