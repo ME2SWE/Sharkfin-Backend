@@ -1,11 +1,11 @@
 {
   "name": "sharkfin-backend",
   "version": "1.0.0",
-  "description": "",
+  "description": "Blue Ocean Capstone Project - Backend by Blue Tide",
   "main": "server/index.js",
   "scripts": {
-    "start": "npx nodemon --watch server/index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server/index.js"
   },
   "repository": {
     "type": "git",
@@ -18,11 +18,18 @@
   },
   "homepage": "https://github.com/BOC-Blue-Tide/Sharkfin-Backend#readme",
   "devDependencies": {
-    "nodemon": "^2.0.21"
-  },
-  "dependencies": {
+    "@alpacahq/alpaca-trade-api": "^2.16.1",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
-    "pg": "^8.10.0"
+    "express-router": "^0.0.1",
+    "moment": "^2.29.4",
+    "moment-timezone": "^0.5.41",
+    "nodemon": "^2.0.21",
+    "pg": "^8.10.0",
+    "ws": "^8.13.0"
+  },
+  "dependencies": {
+    "fs": "^0.0.1-security",
+    "json2csv": "^6.0.0-alpha.2"
   }
 }
