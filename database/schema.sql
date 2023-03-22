@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS users (
   profilepic_URL varchar
 );
 
--- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
+-- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 
 -- COPY users (id, username)
 -- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/mockuser.csv' DELIMITER ',' CSV HEADER;
