@@ -2,23 +2,24 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const port = process.env.PORT;
-// const routes = require('./routes');
 const postQueries = require('./db/postQueries.js');
 const pool = require('./db');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const moment = require('moment');
-const route = require('./routes.js');
-const db = require('../database/dbIndex.js');
+const controllers = require('./controllers.js');
 
 
 const app = express();
 
 app.use(express.json());
-// app.use(routes);
 
 // Transaction Log
-app.get('/transactions', route.getTransactions);
-app.post('/transactions', route.postTransaction);
+app.get('/transactions', controllers.getTransactions);
+app.post('/transactions', controllers.postTransaction);
+
+//Portfolio
+app.get('/pchart', controllers.getChart);
+app.get('/pallocation', controllers.getAllocationAndPosition);
 
 
 // setInterval(async function() {
