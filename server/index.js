@@ -1,19 +1,31 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const app = express();
 const port = process.env.PORT;
-const routes = require('./routes');
 const postQueries = require('./db/postQueries.js');
 const pool = require('./db');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const moment = require('moment');
+const controllers = require('./controllers.js');
+const cors = require('cors');
+
+
+const app = express();
 
 app.use(express.json());
-app.use(routes);
-app.listen(port, () => {
-  console.log(`Back End Server listening on http://localhost:${port}`)
-});
+app.use(cors());
+
+// Transaction Log
+app.get('/transactions', controllers.getTransactions);
+app.post('/transactions', controllers.postTransaction);
+
+//Portfolio
+app.get('/pchart', controllers.getChart);
+app.get('/pallocation', controllers.getAllocationAndPosition);
+
+//Finances
+app.post('/finances', controllers.postFinances);
+
 
 // setInterval(async function() {
 //   var date = moment();
@@ -49,4 +61,5 @@ app.listen(port, () => {
 //   }
 // }, 60000);
 
-
+app.listen(8080);
+console.log('Listening at http://localhost:8080');

@@ -2,10 +2,13 @@ const pool = require('./db');
 const axios = require('axios');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const getQueries = require('./db/getQueries.js');
+const dbTransactions = require('./db/transactionQueries.js');
+const dbFinances = require('./db/financeQueries.js');
 const moment = require('moment');
 require('dotenv').config();
 
 module.exports = {
+  //Portfolio routes
   getChart : async (req, res) => {
     var user_id = req.query.user_id;
     var timeWindow = req.query.timeWindow;
@@ -113,5 +116,31 @@ module.exports = {
       console.log(err);
     });
 
+  },
+  //Transaction Routes
+  getTransactions: (req, res) => {
+    pool.query(dbTransactions.dbGetTransactions(1))
+    .then((result) => {
+      res.send(result.rows);
+    })
+    .catch((err) => {
+      res.send(err);
+    })
+  },
+  postTransaction: (req, res) => {
+    // console.log(req);
+    // console.log(req.body);
+    pool.query(dbTransactions.dbPostTransaction(req.body))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+  postFinances: (req, res) => {
+    //TO-DO: call dbFinances.dbPostFinances
   }
 }
