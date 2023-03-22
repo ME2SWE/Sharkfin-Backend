@@ -1,4 +1,3 @@
-
 -- How to seed this file:
 -- 1) Install PostgreSQL onto your computer as well as psql command line tool
 -- 2) Run 'createdb sharkfin' in the terminal
@@ -6,6 +5,10 @@
 -- 4) Run '\i ./database/schema.sql'
 
 -- to check if your tables are created properly you can run '\dt' to view all the tables
+
+CREATE EXTENSION IF NOT EXISTS timescaledb;
+
+SET TIME ZONE UTC;
 
 CREATE TYPE trade_type AS ENUM ('buy', 'sell');
 CREATE TYPE status_type AS ENUM ('complete', 'pending');
@@ -21,6 +24,72 @@ CREATE TABLE IF NOT EXISTS users (
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
+
+-- COPY users (id, username)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/mockuser.csv' DELIMITER ',' CSV HEADER;
+
+
+CREATE TABLE IF NOT EXISTS portfolioinstant (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT NOT NULL,
+  qty INTEGER NOT NULL,
+  avg_cost DOUBLE PRECISION NOT NULL,
+  buy_pwr DOUBLE PRECISION NOT NULL
+);
+
+-- COPY portfolioinstant (user_id, symbol, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/currentmock.csv' DELIMITER ',' CSV HEADER;
+
+CREATE TABLE IF NOT EXISTS portfoliomins (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT NOT NULL,
+  time TIMESTAMPTZ NOT NULL,
+  qty INTEGER NOT NULL,
+  avg_cost DOUBLE PRECISION NOT NULL,
+  buy_pwr DOUBLE PRECISION NOT NULL
+);
+
+-- COPY portfoliomins (user_id, symbol, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
+
+CREATE TABLE IF NOT EXISTS portfoliodays (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT NOT NULL,
+  time DATE NOT NULL,
+  qty INTEGER NOT NULL,
+  avg_cost DOUBLE PRECISION NOT NULL,
+  buy_pwr DOUBLE PRECISION NOT NULL
+);
+
+-- COPY portfoliodays (user_id, symbol, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysmock.csv' DELIMITER ',' CSV HEADER;
+
+CREATE TABLE IF NOT EXISTS portfolioweeks (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT NOT NULL,
+  time DATE NOT NULL,
+  qty INTEGER NOT NULL,
+  avg_cost DOUBLE PRECISION NOT NULL,
+  buy_pwr DOUBLE PRECISION NOT NULL
+);
+
+SELECT create_hypertable(
+  'portfoliomins',
+  'time',
+  chunk_time_interval => INTERVAL '10 minutes'
+);
+
+SELECT create_hypertable(
+  'portfoliodays',
+  'time',
+  chunk_time_interval => INTERVAL '1 day'
+);
+
+SELECT create_hypertable(
+  'portfolioweeks',
+  'time',
+  chunk_time_interval => INTERVAL '7 days'
+);
 
 CREATE TABLE IF NOT EXISTS friendlist (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -66,3 +135,7 @@ CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_finances_user_id ON finances(user_id);
 CREATE INDEX idx_performance_user_id ON performance(user_id);
+CREATE INDEX idx_user_symbol_instant ON portfolioinstant (user_id, symbol);
+CREATE INDEX idx_user_symbol_time ON portfoliomins (user_id, symbol, time DESC);
+CREATE INDEX idx_user_symbol_time ON portfoliodays (user_id, symbol, time DESC);
+CREATE INDEX idx_user_symbol_time ON portfolioweeks (user_id, symbol, time DESC);
