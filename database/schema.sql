@@ -13,14 +13,13 @@ SET TIME ZONE UTC;
 CREATE TYPE trade_type AS ENUM ('buy', 'sell');
 CREATE TYPE status_type AS ENUM ('complete', 'pending');
 CREATE TYPE trans_type AS ENUM ('bank', 'trade');
-
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY NOT NULL,
-  username varchar NOT NULL,
-  firstname varchar NOT NULL,
-  lastname varchar NOT NULL,
-  email varchar NOT NULL,
-  profilepic_URL varchar
+  username TEXT NOT NULL,
+  firstname TEXT NOT NULL,
+  lastname TEXT NOT NULL,
+  email TEXT NOT NULL,
+  profilepic_URL TEXT
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -105,9 +104,9 @@ CREATE TABLE IF NOT EXISTS transactions (
   user_id integer REFERENCES users(id),
   type trade_type,
   datetime TIMESTAMP DEFAULT NOW(),
-  stock_ticker varchar NOT NULL,
+  stock_ticker TEXT NOT NULL,
   quantity integer NOT NULL,
-  price varchar NOT NULL,
+  price TEXT NOT NULL,
   status status_type
 );
 
@@ -118,11 +117,13 @@ CREATE TABLE IF NOT EXISTS finances (
   user_id integer REFERENCES users(id),
   transaction_type trans_type,
   amount numeric NOT NULL,
+  net_deposits numeric NOT NULL,
   avail_balance numeric,
   datetime TIMESTAMP DEFAULT NOW()
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
+
 
 CREATE TABLE IF NOT EXISTS performance (
   id SERIAL PRIMARY KEY NOT NULL,

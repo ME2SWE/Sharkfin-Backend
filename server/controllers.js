@@ -3,6 +3,7 @@ const axios = require('axios');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
+const dbFinances = require('./db/financeQueries.js');
 const moment = require('moment');
 require('dotenv').config();
 
@@ -124,13 +125,19 @@ module.exports = {
     })
   },
   postTransaction: (req, res) => {
-    console.log(req.body);
+    // console.log(req);
+    // console.log(req.body);
     pool.query(dbTransactions.dbPostTransaction(req.body))
     .then((result) => {
+      console.log(result);
       res.end();
     })
     .catch((err) => {
+      console.log(err);
       res.send(err);
     })
+  },
+  postFinances: (req, res) => {
+    //TO-DO: call dbFinances.dbPostFinances
   }
 }

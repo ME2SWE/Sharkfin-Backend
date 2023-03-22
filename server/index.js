@@ -7,11 +7,13 @@ const pool = require('./db');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const moment = require('moment');
 const controllers = require('./controllers.js');
+const cors = require('cors');
 
 
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 // Transaction Log
 app.get('/transactions', controllers.getTransactions);
@@ -20,6 +22,9 @@ app.post('/transactions', controllers.postTransaction);
 //Portfolio
 app.get('/pchart', controllers.getChart);
 app.get('/pallocation', controllers.getAllocationAndPosition);
+
+//Finances
+app.post('/finances', controllers.postFinances);
 
 
 // setInterval(async function() {

@@ -1,11 +1,11 @@
 const dbTransactions = {
   dbGetTransactions: (user_id) => {
-    var query = `SELECT stock_ticker, type, datetime, quantity, price, status FROM transactions WHERE user_id = ${user_id}`;
+    var query = `SELECT stock_ticker AS stock, type AS transactionType, datetime, quantity, price, status FROM transactions WHERE user_id = ${user_id} ORDER BY datetime DESC`;
     return query;
   },
   dbPostTransaction: (data) => {
     var query = `INSERT INTO transactions (user_id, type, stock_ticker, quantity, price, status)
-      VALUES (${data.user_id}, '${data.transaction_type}', '${data.stock}', ${data.quantity}, '${data.price}', '${data.status}');`;
+      VALUES (${data.account}, '${data.orderType}', '${data.symbol}', ${data.amount}, '${data.price}', 'complete');`;
     return query;
   }
 }
