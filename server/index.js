@@ -61,5 +61,14 @@ app.post('/finances', controllers.postFinances);
 //   }
 // }, 60000);
 
+
+
+//Create user
+app.post('/addUser', controllers.addUser);
+
+//Get user by email
+app.get('/getUserByEmail', controllers.getUserByEmail);
+
+
 app.listen(8080);
 console.log('Listening at http://localhost:8080');
