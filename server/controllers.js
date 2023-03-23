@@ -142,5 +142,37 @@ module.exports = {
   },
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
+  },
+
+
+
+  // Login
+  getUserByEmail: (req, res) => {
+    console.log(req.query, '=====req.query');
+    const text = `SELECT * FROM users WHERE email = $1`;
+    const values = [req.query.email];
+
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  addUser: (req, res) => {
+   //console.log('======req.data', req);
+    const text = `
+      INSERT INTO users (username, firstname, lastname, email, profilepic_url)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id
+    `;
+    const values = [req.body.data.username, req.body.data.firstname, req.body.data.lastname, req.body.data.email, req.body.data.picture];
+
+    pool.query(text, values)
+    .then(result => {
+      console.log('addUser succeeds')
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
   }
 }
