@@ -11,8 +11,8 @@ require('dotenv').config();
 module.exports = {
   //Portfolio routes
   getChart : async (req, res) => {
-    const user_id = req.query.user_id;
-    const timeWindow = req.query.timeWindow;
+    var user_id = req.query.user_id;
+    var timeWindow = req.query.timeWindow;
     const today = moment().day();
     const todayDate = moment().format().slice(0,10);
     if (today === 6) {
@@ -43,7 +43,6 @@ module.exports = {
     });
 
     var timeObj = portfolioHelper.handleTimeFrame(timeWindow);
-    console.log(timeObj.startTime);
     //Get Stock History from Alpaca
     var alpacaMultiBarsURL = `${process.env.ALPACA_URL}/stocks/bars`;
        var alpacaConfigs = {
@@ -72,7 +71,11 @@ module.exports = {
   },
 
   getAllocationAndPosition : async (req, res) => {
-    const user_id = req.params.user_id || req.query.user_id;
+    if (req.params.length === 0) {
+      var user_id = req.query.user_id;
+    } else {
+      var user_id = req.params.user_id;
+    };
     var getAllocationQuery = getQueries.getAllocation(user_id);
     var endDate = moment.utc().subtract(15,'minutes').format();
     var startDate = moment.utc().subtract(1,'days').format();
@@ -185,4 +188,34 @@ module.exports = {
 
 
 
+
+  // Login
+  getUserByEmail: (req, res) => {
+    console.log(req.query, '=====req.query');
+    const text = `SELECT * FROM users WHERE email = $1`;
+    const values = [req.query.email];
+
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  addUser: (req, res) => {
+   //console.log('======req.data', req);
+    const text = `
+      INSERT INTO users (username, firstname, lastname, email, profilepic_url)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id
+    `;
+    const values = [req.body.data.username, req.body.data.firstname, req.body.data.lastname, req.body.data.email, req.body.data.picture];
+
+    pool.query(text, values)
+    .then(result => {
+      console.log('addUser succeeds')
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  }
 }
