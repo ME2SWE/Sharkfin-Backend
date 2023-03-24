@@ -67,11 +67,7 @@ module.exports = {
   },
 
   getAllocationAndPosition : async (req, res) => {
-    if (req.params.length === 0) {
-      var user_id = req.query.user_id;
-    } else {
-      var user_id = req.params.user_id;
-    };
+    var user_id = req.query.user_id;
     var getAllocationQuery = getQueries.getAllocation(user_id);
     var endDate = moment.utc().subtract(15,'minutes').format();
     var startDate = moment.utc().subtract(1,'days').format();
