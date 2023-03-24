@@ -3,6 +3,7 @@ const axios = require('axios');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
+const dbChats = require('./db/chatQueries.js');
 const dbFinances = require('./db/financeQueries.js');
 const moment = require('moment');
 require('dotenv').config();
@@ -138,6 +139,20 @@ module.exports = {
     .catch((err) => {
       console.log(err);
       res.send(err);
+    })
+  },
+  getChatLog: (req, res) => {
+    pool.query(dbChats.dbGetChatLog(1))
+    .then((result) => {
+      console.log(result);
+      res.send(result.rows);
+    })
+  },
+  postChat: (req, res) => {
+    pool.query(dbChats.dbPostChat(req.body))
+    .then((result) => {
+      console.log(result);
+      res.end();
     })
   },
   postFinances: (req, res) => {

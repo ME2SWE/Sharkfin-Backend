@@ -134,6 +134,14 @@ CREATE TABLE IF NOT EXISTS performance (
   quarter_rank integer NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS chats (
+  id SERIAL PRIMARY KEY NOT NULL,
+  sent_from integer REFERENCES users(id),
+  sent_to integer REFERENCES users(id),
+  message TEXT NOT NULL,
+  datetime TIMESTAMP DEFAULT NOW()
+);
+
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
 CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
@@ -143,3 +151,5 @@ CREATE INDEX idx_user_symbol_instant ON portfolioinstant (user_id, symbol);
 CREATE INDEX idx_user_symbol_time ON portfoliomins (user_id, symbol, time DESC);
 CREATE INDEX idx_user_symbol_time ON portfoliodays (user_id, symbol, time DESC);
 CREATE INDEX idx_user_symbol_time ON portfolioweeks (user_id, symbol, time DESC);
+CREATE INDEX idx_chats_sent_from ON chats(sent_from);
+CREATE INDEX idx_chats_sent_to ON chats(sent_to);
