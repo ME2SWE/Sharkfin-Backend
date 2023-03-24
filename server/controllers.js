@@ -4,6 +4,7 @@ const portfolioHelper = require('./helper/portfolioHelper.js');
 const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
 const dbFinances = require('./db/financeQueries.js');
+const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const moment = require('moment');
 require('dotenv').config();
 
@@ -139,5 +140,49 @@ module.exports = {
   },
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
-  }
+  },
+
+
+  //LeaderBoard routes
+  getFriendBoard: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbGetFriendList(req.body))
+    .then(async (friend_arr) => {
+      console.log(friend_arr);
+      await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(friend_arr))
+        .then((result) => {
+          console.log(result);
+          res.status(200).send(result);
+        })
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+  getGlobalBoard: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
+    .then((result) => {
+      res.status(200).send(result);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  },
+
+  updatePerformance: (req, res) => {
+    pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+
+
+
 }
