@@ -283,15 +283,15 @@ module.exports = {
   },
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
-    pool.query()
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+    // pool.query()
+    // .then((result) => {
+    //   console.log(result);
+    //   res.end();
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    //   res.send(err);
+    // })
   },
 
   getFinances: (req, res) => {
