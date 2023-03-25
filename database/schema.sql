@@ -92,7 +92,13 @@ CREATE TABLE IF NOT EXISTS users (
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   email TEXT NOT NULL,
+<<<<<<< HEAD
   profilepic_URL TEXT
+=======
+  profilepic_URL TEXT,
+  bank TEXT,
+  account_number numeric NOT NULL,  
+>>>>>>> 8f918290b690bd4a9aa799e3818ded4319dae346
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -127,8 +133,6 @@ CREATE TABLE IF NOT EXISTS finances (
   amount numeric NOT NULL,
   net_deposits numeric NOT NULL,
   avail_balance numeric,
-  bank TEXT,
-  account_number numeric NOT NULL,
   datetime TIMESTAMP DEFAULT NOW()
 );
 

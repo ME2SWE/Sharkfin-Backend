@@ -283,6 +283,15 @@ module.exports = {
   },
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
+    pool.query()
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
   },
 
   getFinances: (req, res) => {
@@ -435,27 +444,33 @@ module.exports = {
     .catch(e => console.error(e.stack))
   },
 
-   updateUser: (req, res) => {
-    const userInfo = req.body.data;
-    const query = `
-      UPDATE users
-      SET username = $1, firstname = $2, lastname = $3, email = $4, profilepic_URL = $5
-      WHERE id = $6;
-    `;
+   updateUserInfo: (req, res) => {
+  const userInfo = req.body.data;
+  const query = `
+    UPDATE users
+    SET
+      username = COALESCE($1, username),
+      firstname = COALESCE($2, firstname),
+      lastname = COALESCE($3, lastname),
+      profilepic_URL = COALESCE($4, profilepic_URL),
+      bank = COALESCE($5, bank),
+      accountNumber = COALESCE($6, accountNumber),
+    WHERE id = $7;
+  `;
+  const values = [
+    userInfo.username,
+    userInfo.firstname,
+    userInfo.lastname,
+    userInfo.profilePic,
+    userInfo.bank,
+    userInfo.accountNumber,
+    userInfo.id,
+  ];
 
-    const values = [
-      userInfo.username,
-      userInfo.firstname,
-      userInfo.lastname,
-      userInfo.email,
-      userInfo.profilePic,
-      userInfo.id,
-    ];
-
-    try {
-      pool.query(query, values)
+  try {
+    pool.query(query, values)
       .then(result => {
-        console.log('update user succeeds')
+        console.log('update user succeeds');
         res.send(result);
       })
     } catch (error) {
