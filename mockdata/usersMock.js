@@ -55,7 +55,7 @@ generateUsersMockData = () => {
       'emily.thomas16@gmail.com', 'daniel.martinez71@yahoo.com', 'lauren.hernandez82@icloud.com', 'christopher.taylor59@outlook.com', 'jessica.rodriguez14@hotmail.com', 'matthew.anderson77@gmail.com', 'natalie.lee88@yahoo.com', 'joseph.wright52@protonmail.com', 'sophia.perez41@icloud.com', 'andrew.miller75@outlook.com',
       'amber.johnson36@hotmail.com', 'roberto.gonzalez68@gmail.com', 'grace.diaz23@yahoo.com', 'nathan.baker56@icloud.com', 'isabella.harris49@outlook.com', 'jonathan.jackson31@protonmail.com', 'emma.parker98@gmail.com', 'alexander.green79@yahoo.com', 'mia.campbell64@icloud.com', 'benjamin.collins27@outlook.com'
     ]
-      var urlArr = ["pic1.png","pic2.png","pic3.png","pic4.png","pic5.png","pic6.png"];
+      var urlArr = ["https://cdn-icons-png.flaticon.com/128/8398/8398242.png","https://cdn-icons-png.flaticon.com/128/8398/8398263.png","https://cdn-icons-png.flaticon.com/128/8398/8398201.png","https://cdn-icons-png.flaticon.com/128/8398/8398337.png","https://cdn-icons-png.flaticon.com/128/8398/8398295.png","https://cdn-icons-png.flaticon.com/128/8398/8398309.png"];
       var randomURLIndex = x % 6
       data.push({
         id: x+1,

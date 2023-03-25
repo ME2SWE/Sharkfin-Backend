@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS users (
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   email TEXT NOT NULL,
-  profilepic_URL TEXT  
+  profilepic_URL TEXT
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -106,7 +106,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id integer REFERENCES users(id),
   type trade_type,
-  datetime TIMESTAMP DEFAULT NOW(),
+  datetime TEXT NOT NULL,
   stock_ticker TEXT NOT NULL,
   quantity integer NOT NULL,
   price TEXT NOT NULL,
