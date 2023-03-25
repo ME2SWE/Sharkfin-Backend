@@ -5,6 +5,7 @@ const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
 const dbChats = require('./db/chatQueries.js');
 const dbFinances = require('./db/financeQueries.js');
+const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const moment = require('moment');
 require('dotenv').config();
 
@@ -165,6 +166,47 @@ module.exports = {
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
   },
+
+
+  //LeaderBoard routes
+  getFriendBoard: (req, res) => {
+    var id = req.query.id
+    console.log(id)
+    pool.query(dbLeaderBoard.dbGetFriendList(id))
+    .then((results) => {
+      console.log(results)
+          res.status(200).send(results.rows);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+  getGlobalBoard: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
+    .then((result) => {
+      console.log(result)
+      res.status(200).send(result.rows);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  },
+
+  updatePerformance: (req, res) => {
+    pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+
 
 
 

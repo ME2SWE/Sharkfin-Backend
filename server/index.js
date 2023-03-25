@@ -31,6 +31,11 @@ app.get('/pallocation', controllers.getAllocationAndPosition);
 //Finances
 app.post('/finances', controllers.postFinances);
 
+//Leader board
+app.get('/friendleaderboard', controllers.getFriendBoard);
+app.get('/globalleaderboard', controllers.getGlobalBoard);
+app.post('/updatePerformance', controllers.updatePerformance);
+
 
 // setInterval(async function() {
 //   var date = moment();
