@@ -145,6 +145,16 @@ module.exports = {
     //TO-DO: call dbFinances.dbPostFinances
   },
 
+  getFinances: (req, res) => {
+    console.log(req.query, '=====req.query');
+    const text = `SELECT * FROM finances WHERE user_id = $1`;
+    const values = [req.query.user_id];
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
 
   //LeaderBoard routes
   getFriendBoard: (req, res) => {
@@ -201,10 +211,6 @@ module.exports = {
     })
   }
 
-
-
-
-
   // Login
   getUserByEmail: (req, res) => {
     console.log(req.query, '=====req.query');
@@ -216,6 +222,30 @@ module.exports = {
       res.send(result);
     })
     .catch(e => console.error(e.stack))
+  },
+
+  getUserInfo: (req, res) => {
+    console.log(req.query, '=====req.query');
+    if (req.query) {
+      const mockResponse = {
+        rows: [
+          {
+            id: 1,
+            username: 'john_doe',
+            firstname: 'John',
+            lastname: 'Doe',
+            email: 'john.doe@example.com',
+            profilepic_url: 'https://example.com/images/john_doe_profile_pic.jpg',
+          },
+        ],
+        rowCount: 1,
+      };
+    //DATA TO TEST:
+    // const text = `SELECT * FROM users WHERE id = $1`;
+    // const values = [req.query.user_id];
+    // pool.query(text, values)
+      res.send(mockResponse);
+    }
   },
 
   addUser: (req, res) => {
@@ -233,5 +263,36 @@ module.exports = {
       res.send(result);
     })
     .catch(e => console.error(e.stack))
+  },
+
+   updateUser: (req, res) => {
+    const userInfo = req.body.data;
+    const query = `
+      UPDATE users
+      SET username = $1, firstname = $2, lastname = $3, email = $4, profilepic_URL = $5
+      WHERE id = $6;
+    `;
+
+    const values = [
+      userInfo.username,
+      userInfo.firstname,
+      userInfo.lastname,
+      userInfo.email,
+      userInfo.profilePic,
+      userInfo.id,
+    ];
+
+    try {
+      pool.query(query, values)
+      .then(result => {
+        console.log('update user succeeds')
+        res.send(result);
+      })
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      throw error;
+    }
   }
+
+
 }

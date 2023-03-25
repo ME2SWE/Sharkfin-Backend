@@ -71,8 +71,15 @@ app.post('/updatePerformance', controllers.updatePerformance);
 //Create user
 app.post('/addUser', controllers.addUser);
 
+//Update user when edited
+app.post('/updateUser', controllers.updateUser);
+
 //Get user by email
 app.get('/getUserByEmail', controllers.getUserByEmail);
+app.get('/getUserInfo', controllers.getUserInfo);
+
+
+//
 
 
 app.listen(8080);
