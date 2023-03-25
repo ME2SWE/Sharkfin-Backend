@@ -152,8 +152,13 @@ module.exports = {
     console.log(id)
     pool.query(dbLeaderBoard.dbGetFriendList(id))
     .then((results) => {
-      console.log(results)
-          res.status(200).send(results.rows);
+      var arr = result.rows
+      arr.push(id)
+      return arr;
+    })
+    .then(async (user_arr) => {
+      const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(user_arr))
+      res.status(200).send(result.rows);
     })
     .catch((err) => {
       console.log(err);
@@ -172,8 +177,8 @@ module.exports = {
     });
   },
 
-  updatePerformance: (req, res) => {
-    pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
+  updatePerformance: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
     .then((result) => {
       console.log(result);
       res.end();
@@ -183,6 +188,18 @@ module.exports = {
       res.send(err);
     })
   },
+
+  updatePicRUL: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbPostPicURL(req.body.id, req.body.url))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  }
 
 
 
