@@ -19,6 +19,11 @@ app.use(cors());
 app.get('/transactions', controllers.getTransactions);
 app.post('/transactions', controllers.postTransaction);
 
+//Chat Log
+app.get('/chat', controllers.getChatLog);
+app.post('/chat', controllers.postChat);
+app.get('/chat/friends', controllers.getChatFriends);
+
 //Portfolio
 app.get('/pchart', controllers.getChart);
 app.get('/pallocation', controllers.getAllocationAndPosition);
@@ -84,6 +89,18 @@ app.get('/getUserInfo', controllers.getUserInfo);
 
 
 //
+
+//Get Friend Requests By ID
+app.get('/getFriendRequestsByID', controllers.getFriendRequestsByID);
+
+//update Friend Status
+app.post('/updateFriendStatus', controllers.updateFriendStatus);
+
+//add Friend
+app.post('/addFriend', controllers.addFriend);
+
+// get recommended fiends
+app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
 
 app.listen(8080);

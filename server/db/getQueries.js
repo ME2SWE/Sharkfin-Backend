@@ -1,10 +1,10 @@
 const getQueries = {
-  getPortfolioHistory: (user_id, timeframe, timeWindow, todayDate) => {
+  getPortfolioHistory: (accountNum, timeframe, timeWindow, todayDate) => {
     if (timeWindow === '1D') {
       var query = `
       WITH no_agg AS (
         WITH no_weekd AS (
-          SELECT * FROM portfoliomins WHERE user_id = ${user_id}
+          SELECT * FROM portfoliomins WHERE account = ${accountNum}
         )
         SELECT * FROM no_weekd WHERE time >= '${todayDate} 13:30:00+00' AND time < '${todayDate} 19:59:59+00'
         )
@@ -17,7 +17,7 @@ const getQueries = {
       var query = `
       WITH no_agg AS (
         WITH no_weekd AS (
-          SELECT * FROM portfoliodays WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
+          SELECT * FROM portfolioweeks WHERE account = ${accountNum} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
         )
         SELECT * FROM no_weekd WHERE time > NOW() - INTERVAL '${timeframe}'
         )
@@ -30,7 +30,7 @@ const getQueries = {
       var query = `
       WITH no_agg AS (
         WITH no_weekd AS (
-          SELECT * FROM portfoliodays WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
+          SELECT * FROM portfoliodays WHERE account = ${accountNum} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
         )
         SELECT * FROM no_weekd WHERE time > NOW() - INTERVAL '${timeframe}'
         )
@@ -43,13 +43,12 @@ const getQueries = {
 //SELECT json_build_object(t.symbol, json_build_object('time', json_agg(t.time), 'qty', json_agg(t.qty), 'avg_cost', json_agg(t.avg_cost), 'buy_pwr', json_agg(t.buy_pwr)))
   },
 
-  getAllocation: (user_id) => {
-    var query = `SELECT * FROM portfolioinstant WHERE user_id = ${user_id};`;
-    return query;
-  },
-
-  getPositions: function (user_id) {
-    var query = `SELECT * FROM portfolioinstant WHERE user_id = ${user_id};`;
+  getAlloPosQuery: (accountNum) => {
+    var query = `SELECT
+    p.account, p.symbol, p.qty, p.avg_cost, b.buy_pwr
+    FROM portfolioinstant p
+    LEFT JOIN buypwr b ON b.id = p.buy_pwr
+    WHERE account = ${accountNum};`;
     return query;
   },
 
