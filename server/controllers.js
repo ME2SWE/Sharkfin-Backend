@@ -199,6 +199,18 @@ module.exports = {
     })
   },
 
+  getUserDetail: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbGetUserDetail(req.body.id))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
   updatePicRUL: async (req, res) => {
     await pool.query(dbLeaderBoard.dbPostPicURL(req.body.id, req.body.url))
     .then((result) => {
@@ -210,6 +222,23 @@ module.exports = {
       res.send(err);
     })
   },
+  updateUserDetails: async (req, res) => {
+    var id = req.body.id
+    var firstName = req.body.firstname
+    var lastName = req.body.lastname
+    var userName = req.body.username
+    var photoURL = req.body.photourl
+    await pool.query(dbLeaderBoard.dbUpdateUserInfo(id, firstName, lastName, userName, photoURL))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
 
   // Login
   getUserByEmail: (req, res) => {
