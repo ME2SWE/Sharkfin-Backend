@@ -81,7 +81,7 @@ app.post('/updateuserdetails', controllers.updateUserDetails);
 app.post('/addUser', controllers.addUser);
 
 //Update user when edited
-app.post('/updateUser', controllers.updateUser);
+// app.post('/updateUser', controllers.updateUser);
 
 //Get user by email
 app.get('/getUserByEmail', controllers.getUserByEmail);
