@@ -50,6 +50,11 @@ const getQueries = {
     LEFT JOIN buypwr b ON b.id = p.buy_pwr
     WHERE account = ${accountNum};`;
     return query;
+  },
+
+  getUsers: function (user_id) {
+    var query = `SELECT * FROM users WHERE id = ${user_id};`;
+    return query;
   }
 };
 

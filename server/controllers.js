@@ -2,10 +2,15 @@ const pool = require('./db');
 const axios = require('axios');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const getQueries = require('./db/getQueries.js');
+const dbTransactions = require('./db/transactionQueries.js');
+const dbChats = require('./db/chatQueries.js');
+const dbFinances = require('./db/financeQueries.js');
+const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const moment = require('moment');
 require('dotenv').config();
 
 module.exports = {
+  //Portfolio routes
   getChart : async (req, res) => {
     var accountNum = req.query.accountNum;
     var timeWindow = req.query.timeWindow;
@@ -231,5 +236,203 @@ module.exports = {
       console.log(err);
     });
 
+  },
+  //Transaction Routes
+  getTransactions: (req, res) => {
+    pool.query(dbTransactions.dbGetTransactions(1))
+    .then((result) => {
+      res.send(result.rows);
+    })
+    .catch((err) => {
+      res.send(err);
+    })
+  },
+  postTransaction: (req, res) => {
+    // console.log(req);
+    // console.log(req.body);
+    pool.query(dbTransactions.dbPostTransaction(req.body))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+  getChatLog: (req, res) => {
+    pool.query(dbChats.dbGetChatLog(1))
+    .then((result) => {
+      console.log(result);
+      res.send(result.rows);
+    })
+  },
+  postChat: (req, res) => {
+    pool.query(dbChats.dbPostChat(req.body))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+  },
+  getChatFriends: (req, res) => {
+    pool.query(dbChats.dbGetChatFriends(1))
+    .then((result) => {
+      console.log(result);
+      res.send(result.rows);
+    })
+  },
+  postFinances: (req, res) => {
+    //TO-DO: call dbFinances.dbPostFinances
+  },
+
+  getFinances: (req, res) => {
+    console.log(req.query, '=====req.query');
+    const text = `SELECT * FROM finances WHERE user_id = $1`;
+    const values = [req.query.user_id];
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  //LeaderBoard routes
+  getFriendBoard: async (req, res) => {
+    var id = req.query.id
+    console.log(id)
+    await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(id))
+    .then((results) => {
+      var arr = result.rows
+      arr.push(id)
+      return arr;
+    })
+    .then(async (user_arr) => {
+      const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(user_arr))
+      res.status(200).send(result.rows);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+  getGlobalBoard: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
+    .then((result) => {
+      console.log(result)
+      res.status(200).send(result.rows);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  },
+
+  updatePerformance: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+  updatePicRUL: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbPostPicURL(req.body.id, req.body.url))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+  // Login
+  getUserByEmail: (req, res) => {
+    console.log(req.query, '=====req.query');
+    const text = `SELECT * FROM users WHERE email = $1`;
+    const values = [req.query.email];
+
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  getUserInfo: (req, res) => {
+    console.log(req.query, '=====req.query');
+    if (req.query) {
+      const mockResponse = {
+        rows: [
+          {
+            id: 1,
+            username: 'john_doe',
+            firstname: 'John',
+            lastname: 'Doe',
+            email: 'john.doe@example.com',
+            profilepic_url: 'https://example.com/images/john_doe_profile_pic.jpg',
+          },
+        ],
+        rowCount: 1,
+      };
+    //DATA TO TEST:
+    // const text = `SELECT * FROM users WHERE id = $1`;
+    // const values = [req.query.user_id];
+    // pool.query(text, values)
+      res.send(mockResponse);
+    }
+  },
+
+  addUser: (req, res) => {
+   //console.log('======req.data', req);
+    const text = `
+      INSERT INTO users (username, firstname, lastname, email, profilepic_url)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING id
+    `;
+    const values = [req.body.data.username, req.body.data.firstname, req.body.data.lastname, req.body.data.email, req.body.data.picture];
+
+    pool.query(text, values)
+    .then(result => {
+      console.log('addUser succeeds')
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+   updateUser: (req, res) => {
+    const userInfo = req.body.data;
+    const query = `
+      UPDATE users
+      SET username = $1, firstname = $2, lastname = $3, email = $4, profilepic_URL = $5
+      WHERE id = $6;
+    `;
+
+    const values = [
+      userInfo.username,
+      userInfo.firstname,
+      userInfo.lastname,
+      userInfo.email,
+      userInfo.profilePic,
+      userInfo.id,
+    ];
+
+    try {
+      pool.query(query, values)
+      .then(result => {
+        console.log('update user succeeds')
+        res.send(result);
+      })
+    } catch (error) {
+      console.error('Error updating user data:', error);
+      throw error;
+    }
   }
+
+
 }

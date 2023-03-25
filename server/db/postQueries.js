@@ -13,7 +13,7 @@ const postQueries = {
   regPortfolioUpdateWeeks : function() {
     var query = 'INSERT INTO portfolioweeks SELECT DISTINCT ON (symbol) user_id, symbol, time, qty, avg_cost, buy_pwr FROM portfoliodays ORDER BY symbol, time desc;';
     return query;
-  }
+  },
 };
 
 module.exports = postQueries;
