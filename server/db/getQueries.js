@@ -51,6 +51,11 @@ const getQueries = {
   getPositions: function (user_id) {
     var query = `SELECT * FROM portfolioinstant WHERE user_id = ${user_id};`;
     return query;
+  },
+
+  getUsers: function (user_id) {
+    var query = `SELECT * FROM users WHERE id = ${user_id};`;
+    return query;
   }
 };
 

@@ -8,7 +8,7 @@ generateFriendListMockData = () => {
   // Loop through each time interval between start and end date
   for (var x = 0; x < 100 ; x++) {
     //ramdon number of friends
-    var friendsNum = Math.floor(Math.random() * 30) + 1;
+    var friendsNum = Math.floor(Math.random() * 30) + 14;
     const result = [];
     const usedNumbers = new Set();
     while (result.length < friendsNum && usedNumbers.size < 100) {
@@ -18,7 +18,6 @@ generateFriendListMockData = () => {
         usedNumbers.add(randomNumber);
       }
     }
-    console.log(result)
     for (var y = 0; y < friendsNum; y ++) {
       var friendsID = result[y]
       var statusArr = ['complete', 'pending']

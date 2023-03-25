@@ -4,11 +4,13 @@ const dbLeaderBoard = {
     var query = `SELECT friend_id FROM friendlist WHERE user_id = ${user_id} AND status = 'complete';`;
     return query;
   },
-  dbGetFriendLeaderBoard: (user_id) => {
-    var query = `SELECT users.id, performance.performance_percentage, users.firstname, users.profilepic_URL
+  dbGetFriendLeaderBoard: (user_arr) => {
+    var query = `SELECT users.id, users.firstname, users.profilepic_URL, performance.performance_percentage
     FROM users
     JOIN performance ON users.id = performance.user_id
-    WHERE users.id = ${user_id};`;
+    WHERE users.id = ANY(array${user_arr})
+    ORDER BY performance.performance_percentage DESC;
+    `;
     return query;
   },
   dbGetGlobalLeaderBoard: () => {
