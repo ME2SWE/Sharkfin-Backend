@@ -34,7 +34,8 @@ app.post('/finances', controllers.postFinances);
 //Leader board
 app.get('/friendleaderboard', controllers.getFriendBoard);
 app.get('/globalleaderboard', controllers.getGlobalBoard);
-app.post('/updatePerformance', controllers.updatePerformance);
+app.post('/updateperformance', controllers.updatePerformance);
+app.post('updatephoto', controllers.updatePicRUL);
 
 
 // setInterval(async function() {
