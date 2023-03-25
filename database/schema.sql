@@ -139,7 +139,7 @@ CREATE TABLE IF NOT EXISTS chats (
   sent_from integer REFERENCES users(id),
   sent_to integer REFERENCES users(id),
   message TEXT NOT NULL,
-  datetime TIMESTAMP DEFAULT NOW()
+  datetime TEXT NOT NULL
 );
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);

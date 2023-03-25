@@ -155,6 +155,13 @@ module.exports = {
       res.end();
     })
   },
+  getChatFriends: (req, res) => {
+    pool.query(dbChats.dbGetChatFriends(1))
+    .then((result) => {
+      console.log(result);
+      res.send(result.rows);
+    })
+  },
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
   },
