@@ -353,7 +353,7 @@ module.exports = {
 
   // Login
   getUserByEmail: (req, res) => {
-    console.log(req.query, '=====req.query');
+    console.log(req.query, '=====getUserByEmail req.query');
     const text = `SELECT * FROM users WHERE email = $1`;
     const values = [req.query.email];
 
@@ -388,8 +388,9 @@ module.exports = {
     }
   },
 
+  // login
   addUser: (req, res) => {
-   //console.log('======req.data', req);
+   console.log('======addUser req.data', req);
     const text = `
       INSERT INTO users (username, firstname, lastname, email, profilepic_url)
       VALUES ($1, $2, $3, $4, $5)
@@ -432,7 +433,81 @@ module.exports = {
       console.error('Error updating user data:', error);
       throw error;
     }
-  }
+  },
 
+
+  // friendslist
+  getFriendRequestsByID: (req, res) => {
+    console.log(req.query, '=====getFriendRequestsByID req.query');
+
+    const text = `SELECT f.id, u.username, u.profilepic_URL
+    FROM friendlist f
+    JOIN users u ON u.id = f.friend_id
+    WHERE f.user_id = $1 AND f.status = 'pending';`
+
+    const values = [req.query.user_id];
+
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  // friendslist
+  updateFriendStatus: (req, res) => {
+    console.log(req.query, '=====updateFriendStatus req.query');
+    const text = `UPDATE friendlist
+    SET status = 'complete'
+    WHERE id = $1
+    RETURNING *`;
+    const values = [req.body.data.id];
+
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  // friendslist
+  addFriend: (req, res) => {
+      console.log('======addFriend req.data', req);
+      const text = `
+      INSERT INTO friendlist (user_id, friend_id, status)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `;
+    const values = [req.body.data.user_id, req.body.data.friend_id, 'pending'];
+
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  getRecommendedFriends: (req, res) => {
+    console.log(req.query, '=====getRecommendedFriends req.query');
+    const text = `SELECT *
+    FROM users
+    WHERE id NOT IN (
+      SELECT CASE
+               WHEN user_id = $1 THEN friend_id
+               ELSE user_id
+             END
+      FROM friendlist
+      WHERE user_id = $1 OR friend_id = $1
+    ) AND id <> $1
+    ORDER BY random()
+    LIMIT 7`;
+    const values = [req.query.id];
+
+    pool.query(text, values)
+    .then(result => {
+      res.send(result);
+    })
+    .catch(e => console.error(e.stack))
+  }
 
 }
