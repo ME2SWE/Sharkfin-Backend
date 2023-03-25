@@ -36,6 +36,18 @@ app.get('/friendleaderboard', controllers.getFriendBoard);
 app.get('/globalleaderboard', controllers.getGlobalBoard);
 app.post('/updatePerformance', controllers.updatePerformance);
 
+//Get Account# from Finance table
+app.get('/getAccountNumber')
+//Get buying power from portfolioinstant
+app.get('getBuyPower')
+app.get('getHolding')
+//Update buying power and holding to portfolioinstant
+app.put('updateBuyPower')
+app.put('updateHolding')
+//Post order data to transaction
+app.post('/addOrder')
+
+
 
 // setInterval(async function() {
 //   var date = moment();
