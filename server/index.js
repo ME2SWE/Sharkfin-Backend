@@ -38,15 +38,15 @@ app.post('/updateperformance', controllers.updatePerformance);
 app.post('updatephoto', controllers.updatePicRUL);
 
 //Get Account# from Finance table
-app.get('/getAccountNumber')
-//Get buying power from portfolioinstant
-app.get('getBuyPower')
-app.get('getHolding')
+app.get('/getAccountNumber', controllers.getAccountNumber)
+//Get buying power and holding from portfolioinstant
+app.get('getAssetData', controllers.getAssetData)
+
 //Update buying power and holding to portfolioinstant
-app.put('updateBuyPower')
-app.put('updateHolding')
-//Post order data to transaction
-app.post('/addOrder')
+app.put('/updateAssetData', controllers.updateAssetData)
+
+// //Post order data to transaction
+// app.post('/postOrder', controllers.postOrder)
 
 
 

@@ -6,6 +6,7 @@ const dbTransactions = require('./db/transactionQueries.js');
 const dbChats = require('./db/chatQueries.js');
 const dbFinances = require('./db/financeQueries.js');
 const dbLeaderBoard = require('./db/leaderboardQueries.js')
+const dbStockCrypto = require('./db/stockCryptoQueries.js')
 const moment = require('moment');
 require('dotenv').config();
 
@@ -434,19 +435,32 @@ module.exports = {
     }
   },
   //Get Account# from Finance table
-  getAccountNum: (req, res) => {
+  getAccountNumber: (req, res) => {
+    try {
+      //expecting user's identifer
+      var userid = req.query.userid
+      // grab account number using the identifer
+      pool.query(dbStockCrypto.getAccountNumber(userid))
+        .then((result) => {
+          res.send(result.rows);
+        })
+    }
+    catch (err) {
+      res.send(err);
+    }
 
-  }
-//Get buying power from portfolioinstant
-getAccountNum: (req, res) => {
 
+  },
+  //Get buying power from portfolioinstant
+  getAssetData: (req, res) => {
+    //pool.query()
+  },
+  //Update buying power and holding to portfolioinstant
+  updateAssetData: (req, res) => {
+    //pool.query()
   }
-//Update buying power and holding to portfolioinstant
-getAccountNum: (req, res) => {
+  // //Post order data to transaction
+  // postOrder: (req, res) => {
 
-  }
-//Post order data to transaction
-postOrder: (req, res) => {
-
-  }
+  // }
 }

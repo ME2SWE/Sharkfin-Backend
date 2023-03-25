@@ -6,7 +6,7 @@
 
 -- to check if your tables are created properly you can run '\dt' to view all the tables
 
-\c sharkfin
+--\c sharkfin
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -18,7 +18,8 @@ CREATE TABLE IF NOT EXISTS accounts (
 );
 
 COPY accounts (account, username)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
+--FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS buypwr (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -26,7 +27,8 @@ CREATE TABLE IF NOT EXISTS buypwr (
 );
 
 COPY buypwr (id, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/buypwrMock.csv' DELIMITER ',' CSV HEADER;
+--FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/buypwrMock.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/buypwrMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfolioinstant (
   account INTEGER REFERENCES accounts(account),
@@ -41,7 +43,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 );
 
 COPY portfolioinstant(account, symbol, type, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+--FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliomins (
   account INTEGER REFERENCES accounts(account),
@@ -54,7 +57,8 @@ CREATE TABLE IF NOT EXISTS portfoliomins (
 );
 
 COPY portfoliomins (account, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
+--FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliodays (
   account INTEGER REFERENCES accounts(account),
@@ -67,7 +71,8 @@ CREATE TABLE IF NOT EXISTS portfoliodays (
 );
 
 COPY portfoliodays (account, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysMock.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/daysMock.csv' DELIMITER ',' CSV HEADER;
+--FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfolioweeks (
   account INTEGER REFERENCES accounts(account),
@@ -80,8 +85,8 @@ CREATE TABLE IF NOT EXISTS portfolioweeks (
 );
 
 COPY portfolioweeks (account, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
-
+--FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
+FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TYPE trade_type AS ENUM ('buy', 'sell');
 CREATE TYPE status_type AS ENUM ('complete', 'pending');
@@ -92,7 +97,7 @@ CREATE TABLE IF NOT EXISTS users (
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   email TEXT NOT NULL,
-  profilepic_URL TEXT  
+  profilepic_URL TEXT
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -154,8 +159,8 @@ CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_finances_user_id ON finances(user_id);
 CREATE INDEX idx_performance_user_id ON performance(user_id);
 CREATE INDEX idx_account_symbol_instant ON portfolioinstant (account, symbol);
-CREATE INDEX idx_account_symbol_time ON portfoliomins (account, symbol, time DESC);
-CREATE INDEX idx_account_symbol_time ON portfoliodays (account, symbol, time DESC);
-CREATE INDEX idx_account_symbol_time ON portfolioweeks (account, symbol, time DESC);
+CREATE INDEX idx_account_symbol_mins ON portfoliomins (account, symbol, time DESC);
+CREATE INDEX idx_account_symbol_days ON portfoliodays (account, symbol, time DESC);
+CREATE INDEX idx_account_symbol_weeks ON portfolioweeks (account, symbol, time DESC);
 CREATE INDEX idx_chats_sent_from ON chats(sent_from);
 CREATE INDEX idx_chats_sent_to ON chats(sent_to);
