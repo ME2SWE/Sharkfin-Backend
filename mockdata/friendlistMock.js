@@ -21,8 +21,8 @@ generateFriendListMockData = () => {
     console.log(result)
     for (var y = 0; y < friendsNum; y ++) {
       var friendsID = result[y]
-      var statusArr = ['pending', 'accepted', 'rejected']
-      var index = Math.floor(Math.random() * 3);
+      var statusArr = ['complete', 'pending']
+      var index = Math.floor(Math.random() * 2);
       data.push({
         user_id: x+1,
         friend_id: friendsID,

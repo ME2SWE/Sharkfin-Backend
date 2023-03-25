@@ -147,15 +147,13 @@ module.exports = {
 
 
   //LeaderBoard routes
-  getFriendBoard: async (req, res) => {
-    await pool.query(dbLeaderBoard.dbGetFriendList(req.body))
-    .then(async (friend_arr) => {
-      console.log(friend_arr);
-      await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(friend_arr))
-        .then((result) => {
-          console.log(result);
-          res.status(200).send(result);
-        })
+  getFriendBoard: (req, res) => {
+    var id = req.query.id
+    console.log(id)
+    pool.query(dbLeaderBoard.dbGetFriendList(id))
+    .then((results) => {
+      console.log(results)
+          res.status(200).send(results.rows);
     })
     .catch((err) => {
       console.log(err);
@@ -166,7 +164,8 @@ module.exports = {
   getGlobalBoard: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
     .then((result) => {
-      res.status(200).send(result);
+      console.log(result)
+      res.status(200).send(result.rows);
     })
     .catch((err) => {
       console.log(err);
