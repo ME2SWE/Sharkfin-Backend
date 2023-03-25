@@ -34,7 +34,11 @@ app.post('/finances', controllers.postFinances);
 //Leader board
 app.get('/friendleaderboard', controllers.getFriendBoard);
 app.get('/globalleaderboard', controllers.getGlobalBoard);
-app.post('/updatePerformance', controllers.updatePerformance);
+app.get('/getuserdetail', controllers.getUserDetail)
+app.post('/updateperformance', controllers.updatePerformance);
+app.post('/updatephoto', controllers.updatePicRUL);
+app.post('/updateuserdetails', controllers.updateUserDetails);
+
 
 
 // setInterval(async function() {
@@ -85,6 +89,18 @@ app.get('/getUserInfo', controllers.getUserInfo);
 
 
 //
+
+//Get Friend Requests By ID
+app.get('/getFriendRequestsByID', controllers.getFriendRequestsByID);
+
+//update Friend Status
+app.post('/updateFriendStatus', controllers.updateFriendStatus);
+
+//add Friend
+app.post('/addFriend', controllers.addFriend);
+
+// get recommended fiends
+app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
 
 app.listen(8080);
