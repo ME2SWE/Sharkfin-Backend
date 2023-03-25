@@ -1,7 +1,7 @@
 const postQueries = {
   regPortfolioUpdate : function(time) {
-    var query = `INSERT INTO portfoliomins (time, user_id, symbol, qty, avg_cost, buy_pwr)
-    SELECT '${time}', i.user_id, i.symbol, i.qty, i.avg_cost, i.buy_pwr FROM portfolioinstant i;`;
+    var query = `INSERT INTO portfoliomins (time, account, symbol, qty, avg_cost, buy_pwr)
+    SELECT '${time}', i.account, i.symbol, i.qty, i.avg_cost, i.buy_pwr FROM portfolioinstant i;`;
     return query;
   },
 
