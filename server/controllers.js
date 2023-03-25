@@ -169,10 +169,10 @@ module.exports = {
 
 
   //LeaderBoard routes
-  getFriendBoard: (req, res) => {
+  getFriendBoard: async (req, res) => {
     var id = req.query.id
     console.log(id)
-    pool.query(dbLeaderBoard.dbGetFriendList(id))
+    await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(id))
     .then((results) => {
       console.log(results)
           res.status(200).send(results.rows);
