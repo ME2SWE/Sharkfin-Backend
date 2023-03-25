@@ -4,6 +4,7 @@ const portfolioHelper = require('./helper/portfolioHelper.js');
 const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
 const dbFinances = require('./db/financeQueries.js');
+const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const moment = require('moment');
 require('dotenv').config();
 
@@ -145,7 +146,6 @@ module.exports = {
   },
 
   getFinances: (req, res) => {
-
     console.log(req.query, '=====req.query');
     const text = `SELECT * FROM finances WHERE user_id = $1`;
     const values = [req.query.user_id];
@@ -155,6 +155,62 @@ module.exports = {
     })
     .catch(e => console.error(e.stack))
   },
+
+  //LeaderBoard routes
+  getFriendBoard: (req, res) => {
+    var id = req.query.id
+    console.log(id)
+    pool.query(dbLeaderBoard.dbGetFriendList(id))
+    .then((results) => {
+      var arr = result.rows
+      arr.push(id)
+      return arr;
+    })
+    .then(async (user_arr) => {
+      const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(user_arr))
+      res.status(200).send(result.rows);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+  getGlobalBoard: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
+    .then((result) => {
+      console.log(result)
+      res.status(200).send(result.rows);
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  },
+
+  updatePerformance: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
+  updatePicRUL: async (req, res) => {
+    await pool.query(dbLeaderBoard.dbPostPicURL(req.body.id, req.body.url))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+
   // Login
   getUserByEmail: (req, res) => {
     console.log(req.query, '=====req.query');
@@ -167,7 +223,7 @@ module.exports = {
     })
     .catch(e => console.error(e.stack))
   },
-  
+
   getUserInfo: (req, res) => {
     console.log(req.query, '=====req.query');
     if (req.query) {
@@ -183,7 +239,7 @@ module.exports = {
           },
         ],
         rowCount: 1,
-      }; 
+      };
     //DATA TO TEST:
     // const text = `SELECT * FROM users WHERE id = $1`;
     // const values = [req.query.user_id];
@@ -216,16 +272,16 @@ module.exports = {
       SET username = $1, firstname = $2, lastname = $3, email = $4, profilepic_URL = $5
       WHERE id = $6;
     `;
-  
+
     const values = [
       userInfo.username,
       userInfo.firstname,
       userInfo.lastname,
       userInfo.email,
       userInfo.profilePic,
-      userInfo.id, 
+      userInfo.id,
     ];
-  
+
     try {
       pool.query(query, values)
       .then(result => {
@@ -237,6 +293,6 @@ module.exports = {
       throw error;
     }
   }
-  
-    
+
+
 }

@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS finances (
 CREATE TABLE IF NOT EXISTS performance (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id integer REFERENCES users(id),
-  quarter_rank integer NOT NULL
+  performance_percentage numeric(4,1) NOT NULL
 );
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
