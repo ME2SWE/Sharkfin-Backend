@@ -17,16 +17,16 @@ CREATE TABLE IF NOT EXISTS accounts (
   username TEXT NOT NULL
 );
 
-COPY accounts (account, username)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY accounts (account, username)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS buypwr (
   id SERIAL PRIMARY KEY NOT NULL,
   buy_pwr DOUBLE PRECISION NOT NULL
 );
 
-COPY buypwr (id, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/buypwrMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY buypwr (id, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/buypwrMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfolioinstant (
   account INTEGER REFERENCES accounts(account),
@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
       REFERENCES buypwr(id)
 );
 
-COPY portfolioinstant(account, symbol, type, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfolioinstant(account, symbol, type, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliomins (
   account INTEGER REFERENCES accounts(account),
@@ -53,8 +53,8 @@ CREATE TABLE IF NOT EXISTS portfoliomins (
   buy_pwr DOUBLE PRECISION
 );
 
-COPY portfoliomins (account, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfoliomins (account, symbol, type, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliodays (
   account INTEGER REFERENCES accounts(account),
@@ -66,8 +66,8 @@ CREATE TABLE IF NOT EXISTS portfoliodays (
   buy_pwr DOUBLE PRECISION
 );
 
-COPY portfoliodays (account, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfoliodays (account, symbol, type, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfolioweeks (
   account INTEGER REFERENCES accounts(account),
@@ -79,20 +79,23 @@ CREATE TABLE IF NOT EXISTS portfolioweeks (
   buy_pwr DOUBLE PRECISION
 );
 
-COPY portfolioweeks (account, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfolioweeks (account, symbol, type, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
 
 
 CREATE TYPE trade_type AS ENUM ('buy', 'sell');
 CREATE TYPE status_type AS ENUM ('complete', 'pending');
 CREATE TYPE trans_type AS ENUM ('bank', 'trade');
+
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY NOT NULL,
   username TEXT NOT NULL,
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   email TEXT NOT NULL,
-  profilepic_URL TEXT  
+  profilepic_URL TEXT,
+  bank TEXT,
+  account_number numeric NOT NULL
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -111,7 +114,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id integer REFERENCES users(id),
   type trade_type,
-  datetime TIMESTAMP DEFAULT NOW(),
+  datetime TEXT NOT NULL,
   stock_ticker TEXT NOT NULL,
   quantity integer NOT NULL,
   price TEXT NOT NULL,
@@ -127,8 +130,6 @@ CREATE TABLE IF NOT EXISTS finances (
   amount numeric NOT NULL,
   net_deposits numeric NOT NULL,
   avail_balance numeric,
-  bank TEXT,
-  account_number numeric NOT NULL,
   datetime TIMESTAMP DEFAULT NOW()
 );
 
