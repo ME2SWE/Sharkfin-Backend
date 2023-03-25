@@ -87,6 +87,18 @@ app.get('/getUserInfo', controllers.getUserInfo);
 
 //
 
+//Get Friend Requests By ID
+app.get('/getFriendRequestsByID', controllers.getFriendRequestsByID);
+
+//update Friend Status
+app.post('/updateFriendStatus', controllers.updateFriendStatus);
+
+//add Friend
+app.post('/addFriend', controllers.addFriend);
+
+// get recommended fiends
+app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
+
 
 app.listen(8080);
 console.log('Listening at http://localhost:8080');
