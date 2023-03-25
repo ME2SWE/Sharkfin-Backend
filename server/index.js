@@ -19,6 +19,11 @@ app.use(cors());
 app.get('/transactions', controllers.getTransactions);
 app.post('/transactions', controllers.postTransaction);
 
+//Chat Log
+app.get('/chat', controllers.getChatLog);
+app.post('/chat', controllers.postChat);
+app.get('/chat/friends', controllers.getChatFriends);
+
 //Portfolio
 app.get('/pchart', controllers.getChart);
 app.get('/pallocation', controllers.getAllocationAndPosition);

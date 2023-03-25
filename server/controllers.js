@@ -3,6 +3,7 @@ const axios = require('axios');
 const portfolioHelper = require('./helper/portfolioHelper.js');
 const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
+const dbChats = require('./db/chatQueries.js');
 const dbFinances = require('./db/financeQueries.js');
 const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const moment = require('moment');
@@ -141,6 +142,27 @@ module.exports = {
       res.send(err);
     })
   },
+  getChatLog: (req, res) => {
+    pool.query(dbChats.dbGetChatLog(1))
+    .then((result) => {
+      console.log(result);
+      res.send(result.rows);
+    })
+  },
+  postChat: (req, res) => {
+    pool.query(dbChats.dbPostChat(req.body))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+  },
+  getChatFriends: (req, res) => {
+    pool.query(dbChats.dbGetChatFriends(1))
+    .then((result) => {
+      console.log(result);
+      res.send(result.rows);
+    })
+  },
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
   },
@@ -157,10 +179,10 @@ module.exports = {
   },
 
   //LeaderBoard routes
-  getFriendBoard: (req, res) => {
+  getFriendBoard: async (req, res) => {
     var id = req.query.id
     console.log(id)
-    pool.query(dbLeaderBoard.dbGetFriendList(id))
+    await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(id))
     .then((results) => {
       var arr = result.rows
       arr.push(id)
