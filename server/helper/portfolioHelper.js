@@ -7,7 +7,6 @@ module.exports = {
   getChartData : function(combinedData) {
     var alpacaData = combinedData.alpaca;
     var historyData = combinedData.history;
-    console.log(alpacaData, historyData);
     var output = alpacaData;
     var length = output.time.length;
     var result = new Array(length).fill(0);
@@ -25,35 +24,6 @@ module.exports = {
     return output;
   },
 
-  getAllocationRatio : function (portfolioData) {
-    var output = {};
-    output.position = [];
-    output.allocation = {};
-    output.allocation.symbols = [];
-    output.allocation.ratios = [];
-    var totalNetWorth = 0;
-    for (var i = 0; i < portfolioData.length; i++) {
-      totalNetWorth += portfolioData[i].avg_cost * portfolioData[i].qty;
-    }
-    totalNetWorth += portfolioData[0].buy_pwr;
-    var buy_pwr = portfolioData[0].buy_pwr;
-    for (var j = 0; j < portfolioData.length; j++) {
-      var position = {};
-      output.allocation.symbols.push(portfolioData[j].symbol);
-      var currTotal = portfolioData[j].avg_cost * portfolioData[j].qty;
-      var currPer = currTotal/totalNetWorth * 100;
-      position.symbol = portfolioData[j].symbol;
-      position.accountPer = currPer;
-      position.qty = portfolioData[j].qty;
-      position.avgCost = portfolioData[j].avg_cost;
-      output.position.push(position);
-      output.allocation.ratios.push(currPer);
-    }
-    output.allocation.symbols.push('CASH');
-    output.allocation.ratios.push(buy_pwr/totalNetWorth * 100);
-    return output;
-  },
-
   handleTimeFrame : function (timeWindow) {
     var output = {};
     var startTime = moment();
@@ -62,7 +32,7 @@ module.exports = {
     if (timeWindow === '1D') {
       startTime = startTime.format().slice(0,10);
       startTime += 'T13:30:00Z';
-      timeFrame = '10Mins';
+      timeFrame = '10Min';
       sqlTF = '1 day';
     } else if (timeWindow === '1W') {
       startTime = startTime.subtract(7, 'days').format().slice(0,10);
@@ -115,6 +85,36 @@ module.exports = {
     return output;
   },
 
+  getAllocationRatio : function (portfolioData) {
+    var output = {};
+    output.position = [];
+    output.allocation = {};
+    output.allocation.symbols = [];
+    output.allocation.ratios = [];
+    var totalNetWorth = 0;
+    for (var i = 0; i < portfolioData.length; i++) {
+      totalNetWorth += portfolioData[i].avg_cost * portfolioData[i].qty;
+    }
+    totalNetWorth += portfolioData[0].buy_pwr;
+    var buy_pwr = portfolioData[0].buy_pwr;
+    for (var j = 0; j < portfolioData.length; j++) {
+      var position = {};
+      output.allocation.symbols.push(portfolioData[j].symbol);
+      var currTotal = parseFloat(portfolioData[j].avg_cost * portfolioData[j].qty);
+      var currPer = parseFloat((currTotal/totalNetWorth * 100).toFixed(2));
+      position.symbol = portfolioData[j].symbol;
+      position.accountPer = parseFloat(currPer);
+      position.qty = portfolioData[j].qty;
+      position.avgCost = parseFloat(portfolioData[j].avg_cost);
+      output.position.push(position);
+      output.allocation.ratios.push(currPer);
+    }
+    output.totalNetWorth = parseFloat(totalNetWorth.toFixed(2));
+    output.allocation.symbols.push('CASH');
+    output.allocation.ratios.push(parseFloat((buy_pwr/totalNetWorth * 100).toFixed(2)));
+    return output;
+  },
+
   insertPosition : function (alpacaData, cleanedData) {
     var lastData = alpacaData;
     var position = cleanedData.position;
@@ -124,9 +124,12 @@ module.exports = {
       var symbolData = lastData[symbol][length - 1];
       var lastPrice = symbolData.c;
       position[i].lastPrice = lastPrice;
-      position[i].gainLossPer = ((lastPrice - position[i].avgCost) * position[i].qty) / (position[i].avgCost * position[i].qty) * 100;
-      position[i].gainLossDol = ((lastPrice - position[i].avgCost) * position[i].qty);
+      position[i].gainLossPer = parseFloat((((lastPrice - position[i].avgCost) * position[i].qty) / (position[i].avgCost * position[i].qty) * 100).toFixed(2));
+      var gainLossDol = parseFloat(((lastPrice - position[i].avgCost) * position[i].qty).toFixed(2));
+      position[i].gainLossDol = gainLossDol;
+      cleanedData.totalNetWorth+=gainLossDol;
     }
+    cleanedData.totalNetWorth = parseFloat(cleanedData.totalNetWorth.toFixed(2));
     return position;
   },
 
@@ -139,6 +142,22 @@ module.exports = {
       output[[currSymbol]].qty = psqlData[i].qty;
       output[[currSymbol]].avg_cost = psqlData[i].avg_cost;
       output[[currSymbol]].buy_pwr = psqlData[i].buy_pwr;
+    }
+    return output;
+  },
+
+  excludeWeekend : function(cryptoHistory) {
+    var output = {};
+    for (var symbol of Object.keys(cryptoHistory)) {
+      output[[symbol]] = [];
+      var symbolHistory = cryptoHistory[symbol];
+      for (var i = 0; i < symbolHistory.length; i++) {
+        var time = symbolHistory[i].t;
+        var day = moment.utc(time).day();
+        if (day !== 6 && day !== 0) {
+          output[[symbol]].push(symbolHistory[i]);
+        }
+      }
     }
     return output;
   }

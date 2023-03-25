@@ -7,8 +7,9 @@ function generateMockData() {
   // const endDate = new Date(); // End date
   const endDate = moment();
   const interval = 1; // 1 day
-  const symbols = ["AAPL", "GOOGL","TSLA"];
-  const userIDs = [1, 2];
+  const symbols = ["AAPL", "GOOGL","TSLA", "BTC/USD", "DOGE/USD"];
+  const crypto = {'BTC/USD' : 1, 'DOGE/USD' : 1};
+  const accountnums = [1, 2];
   const data = [];
   var count = 0;
   // Loop through each time interval between start and end date
@@ -17,16 +18,22 @@ function generateMockData() {
     // if (currentTime.hours() >= 6 && currentTime.hours() < 13) { // 420 minutes is 7 hours (PST timezone offset)
       // generate a data point for each symbol and user ID
       symbols.forEach(symbol => {
-        userIDs.forEach(userID => {
+        if (symbol in crypto) {
+          var type = 'crypto';
+        } else {
+          var type = 'stock';
+        }
+        accountnums.forEach(accountnum => {
           // Generate random values for each column
           const time = currentTime.format().slice(0, 19).replace('T', ' ').toString(); // remove milliseconds
           const qty = Math.floor(Math.random() * 100) + 1; // generate a random 1 and 100
           const avg_cost = Math.floor(Math.random() * 1000) / 10; // generate a random average cost between 0 and 100.00
-          const buy_pwr = Math.floor(Math.random() * 1000); // calculate the buying power and set to two decimals
+          const buy_pwr = 400;
           if (count > 3) {
             data.push({
-              user_id: userID,
+              account: accountnum,
               symbol: symbol,
+              type: type,
               time: time,
               qty: qty,
               avg_cost: avg_cost,
@@ -39,7 +46,7 @@ function generateMockData() {
     // }
   }
   const fileName = 'daysMock.csv'
-  const fields = ["user_id", "symbol", "time", "qty", "avg_cost", "buy_pwr"];
+  const fields = ["account","symbol","type","time","qty","avg_cost","buy_pwr"];
   const json2csvParser = new Parser({ fields });
   const csv = json2csvParser.parse(data);
   fs.writeFile(fileName, csv, function (err) {
