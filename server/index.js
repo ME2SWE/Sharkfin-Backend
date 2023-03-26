@@ -44,6 +44,7 @@ app.get('/getUserByEmail', controllers.getUserByEmail); //get user by email if e
 app.post('/updatephoto', controllers.updatePicRUL); //updates users profile pic only
 app.get(`/users/:id`, controllers.getUserInfo); //get user info that is in users table (include bank info)
 app.post('/users/:id/update', controllers.updateUserDetails); //update all user info
+app.post('/users/:id/update/bank', controllers.updateBankInfo); //update bank info only
 
 //Friends
 app.get('/getFriendRequestsByID', controllers.getFriendRequestsByID);
