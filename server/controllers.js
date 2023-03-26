@@ -376,23 +376,6 @@ module.exports = {
       res.send(err);
     })
   },
-  updateUserDetails: async (req, res) => {
-    var id = req.body.id
-    var firstName = req.body.firstname
-    var lastName = req.body.lastname
-    var userName = req.body.username
-    var photoURL = req.body.photourl
-    await pool.query(dbLeaderBoard.dbUpdateUserInfo(id, firstName, lastName, userName, photoURL))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
-  },
-
 
   // Login & Accounts
   getUserByEmail: (req, res) => {
@@ -416,26 +399,19 @@ module.exports = {
       console.log(err);
       res.send(err);
     })
-    // console.log(req.query, '=====req.query');
-    // if (req.query) {
-    //   const mockResponse = {
-    //     rows: [
-    //       {
-    //         id: 1,
-    //         username: 'john_doe',
-    //         firstname: 'John',
-    //         lastname: 'Doe',
-    //         email: 'john.doe@example.com',
-    //         profilepic_url: 'https://example.com/images/john_doe_profile_pic.jpg',
-    //       },
-    //     ],
-    //     rowCount: 1,
-    //   };
-    //DATA TO TEST:
-    // const text = `SELECT * FROM users WHERE id = $1`;
-    // const values = [req.query.user_id];
-    // pool.query(text, values)
-    // }
+  },
+  updateUserDetails: (req, res) => {
+    console.log(req.params);
+    console.log(req.body);
+    // res.send('sent!');
+    pool.query(dbAccounts.dbUpdateUserInfo(req.params.id, req.body))
+    .then((result) => {
+      res.send('updated!');
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
   },
 
   // login
@@ -456,35 +432,35 @@ module.exports = {
     .catch(e => console.error(e.stack))
   },
 
-   updateUserInfo: (req, res) => {
-  const userInfo = req.body.data;
-  const query = `
-    UPDATE users
-    SET
-      username = COALESCE($1, username),
-      firstname = COALESCE($2, firstname),
-      lastname = COALESCE($3, lastname),
-      profilepic_URL = COALESCE($4, profilepic_URL),
-      bank = COALESCE($5, bank),
-      accountNumber = COALESCE($6, accountNumber),
-    WHERE id = $7;
-  `;
-  const values = [
-    userInfo.username,
-    userInfo.firstname,
-    userInfo.lastname,
-    userInfo.profilePic,
-    userInfo.bank,
-    userInfo.accountNumber,
-    userInfo.id,
-  ];
+  updateUserInfo: (req, res) => {
+    const userInfo = req.body.data;
+    const query = `
+      UPDATE users
+      SET
+        username = COALESCE($1, username),
+        firstname = COALESCE($2, firstname),
+        lastname = COALESCE($3, lastname),
+        profilepic_URL = COALESCE($4, profilepic_URL),
+        bank = COALESCE($5, bank),
+        accountNumber = COALESCE($6, accountNumber),
+      WHERE id = $7;
+    `;
+    const values = [
+      userInfo.username,
+      userInfo.firstname,
+      userInfo.lastname,
+      userInfo.profilePic,
+      userInfo.bank,
+      userInfo.accountNumber,
+      userInfo.id,
+    ];
 
-  try {
-    pool.query(query, values)
-      .then(result => {
-        console.log('update user succeeds');
-        res.send(result);
-      })
+    try {
+      pool.query(query, values)
+        .then(result => {
+          console.log('update user succeeds');
+          res.send(result);
+        })
     } catch (error) {
       console.error('Error updating user data:', error);
       throw error;

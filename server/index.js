@@ -30,15 +30,26 @@ app.get('/pallocation', controllers.getAllocationAndPosition);
 
 //Finances
 app.post('/finances', controllers.postFinances);
+//app.get
 
 //Leader board
 app.get('/friendleaderboard', controllers.getFriendBoard);
 app.get('/globalleaderboard', controllers.getGlobalBoard);
-app.get('/getuserdetail', controllers.getUserDetail)
+app.get('/getuserdetail', controllers.getUserDetail) //get users info along with performance info
 app.post('/updateperformance', controllers.updatePerformance);
-app.post('/updatephoto', controllers.updatePicRUL);
-app.post('/updateuserdetails', controllers.updateUserDetails);
 
+//Users
+app.post('/addUser', controllers.addUser); //adds new user
+app.get('/getUserByEmail', controllers.getUserByEmail); //get user by email if email already exists
+app.post('/updatephoto', controllers.updatePicRUL); //updates users profile pic only
+app.get(`/users/:id`, controllers.getUserInfo); //get user info that is in users table (include bank info)
+app.post('/users/:id/update', controllers.updateUserDetails); //update all user info
+
+//Friends
+app.get('/getFriendRequestsByID', controllers.getFriendRequestsByID);
+app.post('/updateFriendStatus', controllers.updateFriendStatus);
+app.post('/addFriend', controllers.addFriend);
+app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
 
 // setInterval(async function() {
@@ -74,34 +85,6 @@ app.post('/updateuserdetails', controllers.updateUserDetails);
 //     console.log('waiting for trigger...');
 //   }
 // }, 60000);
-
-
-
-//Create user
-app.post('/addUser', controllers.addUser);
-
-//Update user when edited
-// app.post('/updateUser', controllers.updateUser);
-
-//Get user by email
-app.get('/getUserByEmail', controllers.getUserByEmail);
-app.get(`/users/:id`, controllers.getUserInfo);
-
-
-//
-
-//Get Friend Requests By ID
-app.get('/getFriendRequestsByID', controllers.getFriendRequestsByID);
-
-//update Friend Status
-app.post('/updateFriendStatus', controllers.updateFriendStatus);
-
-//add Friend
-app.post('/addFriend', controllers.addFriend);
-
-// get recommended fiends
-app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
-
 
 app.listen(8080);
 console.log('Listening at http://localhost:8080');
