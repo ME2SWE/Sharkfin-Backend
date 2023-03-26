@@ -14,26 +14,13 @@ const dbAccounts = {
     WHERE id = ${id};`;
     return query;
   },
+  dbUpdateBankInfo: (id, bankInfo) => {
+    var query = `UPDATE users
+    SET bank = '${bankInfo.bank}',
+        account_number = ${bankInfo.account_number}
+    WHERE id = ${id};`;
+    return query;
+  },
 }
 
 module.exports = dbAccounts;
-
-// CREATE TABLE IF NOT EXISTS users (
-//   id SERIAL PRIMARY KEY NOT NULL,
-//   username TEXT NOT NULL,
-//   firstname TEXT NOT NULL,
-//   lastname TEXT NOT NULL,
-//   email TEXT NOT NULL,
-//   profilepic_URL TEXT,
-//   bank TEXT,
-//   account_number numeric NOT NULL
-// );
-
-// UPDATE users
-//     SET username = 'Jacinthe Chong',
-//         firstname = 'Raghav',
-//         lastname = 'Chong',
-//         profilepic_url = 'https://lh3.googleusercontent.com/a/AGNmyxYifgwQMYO5XzQGcZaWpFoZRvAOBybaRzGaWvq9Bw=s96-c',
-//         bank = null,
-//         account_number = null
-//     WHERE id = 1;

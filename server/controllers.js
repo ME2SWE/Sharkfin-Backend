@@ -401,10 +401,17 @@ module.exports = {
     })
   },
   updateUserDetails: (req, res) => {
-    console.log(req.params);
-    console.log(req.body);
-    // res.send('sent!');
     pool.query(dbAccounts.dbUpdateUserInfo(req.params.id, req.body))
+    .then((result) => {
+      res.send('updated!');
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+  updateBankInfo: (req, res) => {
+    pool.query(dbAccounts.dbUpdateBankInfo(req.params.id, req.body))
     .then((result) => {
       res.send('updated!');
     })
