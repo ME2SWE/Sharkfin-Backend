@@ -6,7 +6,7 @@
 
 -- to check if your tables are created properly you can run '\dt' to view all the tables
 
-\c sharkfin
+-- \c sharkfin
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -91,11 +91,11 @@ CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY NOT NULL,
   username TEXT NOT NULL,
   firstname TEXT NOT NULL,
-  lastname TEXT NOT NULL,
+  lastname TEXT,
   email TEXT NOT NULL,
   profilepic_URL TEXT,
   bank TEXT,
-  account_number numeric NOT NULL
+  account_number numeric
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -155,8 +155,8 @@ CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_finances_user_id ON finances(user_id);
 CREATE INDEX idx_performance_user_id ON performance(user_id);
 CREATE INDEX idx_account_symbol_instant ON portfolioinstant (account, symbol);
-CREATE INDEX idx_account_symbol_time ON portfoliomins (account, symbol, time DESC);
-CREATE INDEX idx_account_symbol_time ON portfoliodays (account, symbol, time DESC);
-CREATE INDEX idx_account_symbol_time ON portfolioweeks (account, symbol, time DESC);
+CREATE INDEX idx_portmins_symbol_time ON portfoliomins (account, symbol, time DESC);
+CREATE INDEX idx_portdays_symbol_time ON portfoliodays (account, symbol, time DESC);
+CREATE INDEX idx_portweeks_symbol_time ON portfolioweeks (account, symbol, time DESC);
 CREATE INDEX idx_chats_sent_from ON chats(sent_from);
 CREATE INDEX idx_chats_sent_to ON chats(sent_to);
