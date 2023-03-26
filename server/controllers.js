@@ -5,6 +5,7 @@ const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
 const dbChats = require('./db/chatQueries.js');
 const dbFinances = require('./db/financeQueries.js');
+const dbAccounts = require('./db/accountQueries.js');
 const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const moment = require('moment');
 require('dotenv').config();
@@ -260,6 +261,8 @@ module.exports = {
       res.send(err);
     })
   },
+
+  //Chat Routes
   getChatLog: (req, res) => {
     pool.query(dbChats.dbGetChatLog(1))
     .then((result) => {
@@ -281,6 +284,8 @@ module.exports = {
       res.send(result.rows);
     })
   },
+
+  //Finances Routes
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
     // pool.query()
@@ -389,7 +394,7 @@ module.exports = {
   },
 
 
-  // Login
+  // Login & Accounts
   getUserByEmail: (req, res) => {
     console.log(req.query, '=====getUserByEmail req.query');
     const text = `SELECT * FROM users WHERE email = $1`;
@@ -403,27 +408,34 @@ module.exports = {
   },
 
   getUserInfo: (req, res) => {
-    console.log(req.query, '=====req.query');
-    if (req.query) {
-      const mockResponse = {
-        rows: [
-          {
-            id: 1,
-            username: 'john_doe',
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'john.doe@example.com',
-            profilepic_url: 'https://example.com/images/john_doe_profile_pic.jpg',
-          },
-        ],
-        rowCount: 1,
-      };
+    pool.query(dbAccounts.dbGetUserInfo(req.params.id))
+    .then((result) => {
+      res.send(result.rows);
+    })
+    .catch(err => {
+      console.log(err);
+      res.send(err);
+    })
+    // console.log(req.query, '=====req.query');
+    // if (req.query) {
+    //   const mockResponse = {
+    //     rows: [
+    //       {
+    //         id: 1,
+    //         username: 'john_doe',
+    //         firstname: 'John',
+    //         lastname: 'Doe',
+    //         email: 'john.doe@example.com',
+    //         profilepic_url: 'https://example.com/images/john_doe_profile_pic.jpg',
+    //       },
+    //     ],
+    //     rowCount: 1,
+    //   };
     //DATA TO TEST:
     // const text = `SELECT * FROM users WHERE id = $1`;
     // const values = [req.query.user_id];
     // pool.query(text, values)
-      res.send(mockResponse);
-    }
+    // }
   },
 
   // login

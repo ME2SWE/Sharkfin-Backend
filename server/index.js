@@ -85,7 +85,7 @@ app.post('/addUser', controllers.addUser);
 
 //Get user by email
 app.get('/getUserByEmail', controllers.getUserByEmail);
-app.get('/getUserInfo', controllers.getUserInfo);
+app.get(`/users/:id`, controllers.getUserInfo);
 
 
 //
