@@ -42,15 +42,6 @@ const dbLeaderBoard = {
     WHERE id = ${id};`;
     return query;
   },
-  dbUpdateUserInfo: (id, firstName, lastName, userName, photoURL) => {
-    var query = `UPDATE users
-    SET username = ${userName},
-        firstname = ${firstName},
-        lastname = ${lastName},
-        profilepic_URL = ${photoURL}
-    WHERE id = ${id};`;
-    return query;
-  },
 }
 
 module.exports = dbLeaderBoard;
