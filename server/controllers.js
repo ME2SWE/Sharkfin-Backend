@@ -548,6 +548,18 @@ module.exports = {
         res.send(result);
       })
       .catch(e => console.error(e.stack))
+  },
+  getAssetData: (req, res) => {
+    console.log(req.query.userid)
+    // pool.query(dbStockCrypto.getAssetData(userid))
+    //   .then((result) => {
+    //     res.send(result.rows);
+    //   })
+    //   .catch((err) => {
+    //     res.send(err);
+    //   })
+
+
   }
 
 }

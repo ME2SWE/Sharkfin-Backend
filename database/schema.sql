@@ -6,7 +6,7 @@
 
 -- to check if your tables are created properly you can run '\dt' to view all the tables
 
--- \c sharkfin
+\c sharkfin
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -103,6 +103,8 @@ CREATE TABLE IF NOT EXISTS users (
   account_number numeric
 );
 
+COPY users (id,username,firstname,lastname,email,profilepic_URL) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
+
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 
 
@@ -112,6 +114,9 @@ CREATE TABLE IF NOT EXISTS friendlist (
   friend_id integer REFERENCES users(id),
   status status_type
 );
+
+COPY friendlist (user_id,friend_id,status) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/friendlistMock.csv' DELIMITER ',' CSV HEADER;
+
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO friendlist (user_id, friend_id, status) VALUES (1, 2, 'pending');
 
@@ -125,6 +130,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   price TEXT NOT NULL,
   status status_type
 );
+COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/transactionsMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO transactions (user_id, type, stock_ticker, quantity, price, status) VALUES (1, 'buy', 'GOOG', 5, '52.11', 'complete');
 
@@ -135,7 +141,7 @@ CREATE TABLE IF NOT EXISTS finances (
   amount numeric NOT NULL,
   net_deposits numeric NOT NULL,
   avail_balance numeric,
-  datetime TIMESTAMP DEFAULT NOW()
+  datetime TEXT NOT NULL
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
@@ -145,6 +151,9 @@ CREATE TABLE IF NOT EXISTS performance (
   user_id integer REFERENCES users(id),
   performance_percentage numeric(4,1) NOT NULL
 );
+
+COPY performance (user_id,performance_percentage) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/performanceMock.csv' DELIMITER ',' CSV HEADER;
+
 
 CREATE TABLE IF NOT EXISTS chats (
   id SERIAL PRIMARY KEY NOT NULL,
