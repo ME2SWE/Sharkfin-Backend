@@ -30,12 +30,27 @@ app.get('/pallocation', controllers.getAllocationAndPosition);
 
 //Finances
 app.post('/finances', controllers.postFinances);
+//app.get
 
 //Leader board
 app.get('/friendleaderboard', controllers.getFriendBoard);
 app.get('/globalleaderboard', controllers.getGlobalBoard);
+app.get('/getuserdetail', controllers.getUserDetail) //get users info along with performance info
 app.post('/updateperformance', controllers.updatePerformance);
-app.post('updatephoto', controllers.updatePicRUL);
+
+//Users
+app.post('/addUser', controllers.addUser); //adds new user
+app.get('/getUserByEmail', controllers.getUserByEmail); //get user by email if email already exists
+app.post('/updatephoto', controllers.updatePicRUL); //updates users profile pic only
+app.get(`/users/:id`, controllers.getUserInfo); //get user info that is in users table (include bank info)
+app.post('/users/:id/update', controllers.updateUserDetails); //update all user info
+app.post('/users/:id/update/bank', controllers.updateBankInfo); //update bank info only
+
+//Friends
+app.get('/getFriendRequestsByID', controllers.getFriendRequestsByID);
+app.post('/updateFriendStatus', controllers.updateFriendStatus);
+app.post('/addFriend', controllers.addFriend);
+app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
 //Get Account# from Finance table
 app.get('/getAccountNumber', controllers.getAccountNumber)
@@ -83,22 +98,6 @@ app.put('/updateAssetData', controllers.updateAssetData)
 //     console.log('waiting for trigger...');
 //   }
 // }, 60000);
-
-
-
-//Create user
-app.post('/addUser', controllers.addUser);
-
-//Update user when edited
-app.post('/updateUser', controllers.updateUser);
-
-//Get user by email
-app.get('/getUserByEmail', controllers.getUserByEmail);
-app.get('/getUserInfo', controllers.getUserInfo);
-
-
-//
-
 
 app.listen(8080);
 console.log('Listening at http://localhost:8080');

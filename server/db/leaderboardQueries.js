@@ -13,6 +13,15 @@ const dbLeaderBoard = {
     `;
     return query;
   },
+  dbGetUserDetail: (id) => {
+    var query = `SELECT id,
+    (SELECT performance_percentage FROM performance WHERE user_id = users.id) as performance_percentage,
+    firstname,
+    profilepic_URL
+    FROM users
+    WHERE id = ${id};`;
+    return query;
+  },
   dbGetGlobalLeaderBoard: () => {
     var query = `SELECT users.id, users.firstname, users.profilepic_URL, performance.performance_percentage
     FROM users
@@ -32,7 +41,7 @@ const dbLeaderBoard = {
     SET profilepic_URL = '${url}'
     WHERE id = ${id};`;
     return query;
-  }
+  },
 }
 
 module.exports = dbLeaderBoard;

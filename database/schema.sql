@@ -6,7 +6,7 @@
 
 -- to check if your tables are created properly you can run '\dt' to view all the tables
 
---\c sharkfin
+-- \c sharkfin
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -91,13 +91,16 @@ FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER 
 CREATE TYPE trade_type AS ENUM ('buy', 'sell');
 CREATE TYPE status_type AS ENUM ('complete', 'pending');
 CREATE TYPE trans_type AS ENUM ('bank', 'trade');
+
 CREATE TABLE IF NOT EXISTS users (
   id SERIAL PRIMARY KEY NOT NULL,
   username TEXT NOT NULL,
   firstname TEXT NOT NULL,
-  lastname TEXT NOT NULL,
+  lastname TEXT,
   email TEXT NOT NULL,
-  profilepic_URL TEXT
+  profilepic_URL TEXT,
+  bank TEXT,
+  account_number numeric
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
@@ -116,7 +119,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id integer REFERENCES users(id),
   type trade_type,
-  datetime TIMESTAMP DEFAULT NOW(),
+  datetime TEXT NOT NULL,
   stock_ticker TEXT NOT NULL,
   quantity integer NOT NULL,
   price TEXT NOT NULL,
@@ -132,8 +135,6 @@ CREATE TABLE IF NOT EXISTS finances (
   amount numeric NOT NULL,
   net_deposits numeric NOT NULL,
   avail_balance numeric,
-  bank TEXT,
-  account_number numeric NOT NULL,
   datetime TIMESTAMP DEFAULT NOW()
 );
 
