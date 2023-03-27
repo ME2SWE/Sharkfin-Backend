@@ -299,15 +299,20 @@ module.exports = {
   //LeaderBoard routes
   getFriendBoard: async (req, res) => {
     var id = req.query.id
-    console.log(id)
-    await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(id))
+    // console.log(id)
+    await pool.query(dbLeaderBoard.dbGetFriendList(id))
     .then((results) => {
-      var arr = result.rows
-      arr.push(id)
-      return arr;
+      var arr = results.rows
+      var friendIdArr = []
+      for (var x = 0; x < arr.length; x++) {
+        friendIdArr.push(arr[x].friend_id)
+      }
+      friendIdArr.push(Number(id))
+      return friendIdArr;
     })
     .then(async (user_arr) => {
-      const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(user_arr))
+      const arr = JSON.stringify(user_arr)
+      const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(arr))
       res.status(200).send(result.rows);
     })
     .catch((err) => {
@@ -319,7 +324,6 @@ module.exports = {
   getGlobalBoard: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
     .then((result) => {
-      console.log(result)
       res.status(200).send(result.rows);
     })
     .catch((err) => {
