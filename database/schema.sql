@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- COPY users (id, username, firstname, lastname, email, profilepic_url)
 -- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
-
+INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'H', 'Y', 'howardhyoon@gmail.com', 'www.photoURL.com');
+INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser1', 'H1', 'Y1', 'testing@gmail.com', 'www.photoURL.com');
 
 CREATE TABLE IF NOT EXISTS friendlist (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -63,13 +64,15 @@ CREATE TABLE IF NOT EXISTS finances (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id integer REFERENCES users(id),
   transaction_type trans_type,
-  amount numeric NOT NULL,
-  net_deposits numeric NOT NULL,
-  avail_balance numeric,
-  datetime TEXT NOT NULL,
+  amount DOUBLE PRECISION NOT NULL,
+  net_deposits DOUBLE PRECISION NOT NULL,
+  avail_balance DOUBLE PRECISION,
+  datetime TIMESTAMP DEFAULT NOW()
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
+insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',0,1000,1000);
+insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',1000,2000,2000);
 
 CREATE TABLE IF NOT EXISTS performance (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -96,8 +99,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
   avg_cost DOUBLE PRECISION
 );
 
--- COPY portfolioinstant(account, symbol, type, qty, avg_cost, buy_pwr)
--- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliomins (
   user_id INTEGER REFERENCES users(id),
@@ -109,7 +112,7 @@ CREATE TABLE IF NOT EXISTS portfoliomins (
   buy_pwr DOUBLE PRECISION
 );
 
--- COPY portfoliomins (account, symbol, type, time, qty, avg_cost, buy_pwr)
+-- COPY portfoliomins (user_id, symbol, type, time, qty, avg_cost, buy_pwr)
 -- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliodays (
