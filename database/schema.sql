@@ -63,9 +63,9 @@ CREATE TABLE IF NOT EXISTS finances (
   id SERIAL PRIMARY KEY NOT NULL,
   user_id integer REFERENCES users(id),
   transaction_type trans_type,
-  amount numeric NOT NULL,
-  net_deposits numeric NOT NULL,
-  avail_balance numeric,
+  amount DOUBLE PRECISION NOT NULL,
+  net_deposits DOUBLE PRECISION NOT NULL,
+  avail_balance DOUBLE PRECISION,
   datetime TEXT NOT NULL,
 );
 
