@@ -92,7 +92,7 @@ CREATE TABLE IF NOT EXISTS users (
   firstname TEXT NOT NULL,
   lastname TEXT NOT NULL,
   email TEXT NOT NULL,
-  profilepic_URL TEXT  
+  profilepic_URL TEXT
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');

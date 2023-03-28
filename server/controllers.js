@@ -344,9 +344,10 @@ module.exports = {
   },
 
   getUserDetail: async (req, res) => {
-    await pool.query(dbLeaderBoard.dbGetUserDetail(req.body.id))
+    await pool.query(dbLeaderBoard.dbGetUserDetail(req.query.id))
     .then((result) => {
       console.log(result);
+      res.status(200).send(result.rows[0])
       res.end();
     })
     .catch((err) => {
@@ -436,7 +437,7 @@ module.exports = {
       console.log('addUser succeeds')
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {res.send(e); console.error(e.stack)})
   },
 
    updateUser: (req, res) => {
