@@ -4,14 +4,26 @@ const dbAccounts = {
     return query;
   },
   dbUpdateUserInfo: (id, userInfo) => {
-    var query = `UPDATE users
-    SET username = '${userInfo.username}',
-        firstname = '${userInfo.firstname}',
-        lastname = '${userInfo.lastname}',
-        profilepic_url = '${userInfo.profilepic_url}',
-        bank = ${userInfo.bank},
-        account_number = ${userInfo.account_number}
-    WHERE id = ${id};`;
+    var query;
+    if (!userInfo.bank) {
+      query = `UPDATE users
+      SET username = '${userInfo.username}',
+      firstname = '${userInfo.firstname}',
+      lastname = '${userInfo.lastname}',
+      profilepic_url = '${userInfo.profilepic_url}',
+      bank = ${userInfo.bank},
+      account_number = ${userInfo.account_number}
+      WHERE id = ${id};`;
+    } else {
+      query = `UPDATE users
+      SET username = '${userInfo.username}',
+      firstname = '${userInfo.firstname}',
+      lastname = '${userInfo.lastname}',
+      profilepic_url = '${userInfo.profilepic_url}',
+      bank = '${userInfo.bank}',
+      account_number = ${userInfo.account_number}
+      WHERE id = ${id};`
+    }
     return query;
   },
   dbUpdateBankInfo: (id, bankInfo) => {
