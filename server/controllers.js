@@ -38,12 +38,12 @@ module.exports = {
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfoliomins
-      WHERE account = ${user_id} AND type = 'stock')
+      WHERE user_id = ${user_id} AND type = 'stock')
       AS stocks,
       ARRAY (
         SELECT DISTINCT symbol
         FROM portfoliomins
-        WHERE account = ${user_id} AND type = 'crypto')
+        WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
       .then((result) => {
@@ -153,12 +153,12 @@ module.exports = {
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfolioinstant
-      WHERE account = ${user_id} AND type = 'stock')
+      WHERE user_id = ${user_id} AND type = 'stock')
       AS stocks,
       ARRAY (
         SELECT DISTINCT symbol
         FROM portfolioinstant
-        WHERE account = ${user_id} AND type = 'crypto')
+        WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
       .then((result) => {
@@ -230,14 +230,12 @@ module.exports = {
       .then((result) => {
         var incomingData = result.rows;
         var allocationData = portfolioHelper.getAllocationRatio(incomingData);
-        console.log(allocationData);
         var positionData = portfolioHelper.insertPosition(alpacaResults, allocationData);
         res.status(200).send(allocationData);
       })
       .catch((err) => {
         console.log(err);
       });
-
   },
   //Transaction Routes
   getTransactions: (req, res) => {
