@@ -316,7 +316,8 @@ module.exports = {
     console.log(id)
     await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(id))
     .then((results) => {
-      var arr = result.rows
+      console.log(results);
+      var arr = results.rows
       arr.push(id)
       return arr;
     })
