@@ -16,7 +16,7 @@ generateTransactionMockData = () => {
     var quantity = Math.floor(Math.random() * (500 - 0) + 0);
     var date = new Date();
       data.push({
-        id: x+1,
+        id: x+101,
         user_id: user,
         type: tradeTypeArr[tradeIndex],
         datetime: date.toUTCString(),
@@ -28,7 +28,7 @@ generateTransactionMockData = () => {
   }
 
   const fileName = 'transactionsMock.csv'
-  const fields = ["id", "user_id", "type", "datetime", "stock_ticker", "quantity", "price", "status"];
+  const fields = ["id","user_id", "type", "datetime", "stock_ticker", "quantity", "price", "status"];
   const json2csvParser = new Parser({ fields });
   const csv = json2csvParser.parse(data);
   fs.writeFile(fileName, csv, function (err) {

@@ -27,6 +27,8 @@ CREATE TABLE IF NOT EXISTS users (
   account_number numeric
 );
 
+-- COPY users (id, username, firstname, lastname, email, profilepic_url)
+-- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 
 
@@ -36,6 +38,9 @@ CREATE TABLE IF NOT EXISTS friendlist (
   friend_id integer REFERENCES users(id),
   status status_type
 );
+
+-- COPY friendlist (user_id, friend_id, status)
+-- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO friendlist (user_id, friend_id, status) VALUES (1, 2, 'pending');
 
@@ -49,6 +54,8 @@ CREATE TABLE IF NOT EXISTS transactions (
   price TEXT NOT NULL,
   status status_type
 );
+-- COPY transactions (id, user_id, type, datetime, stock_ticker, quantity, price, status)
+-- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/transactionsMock.csv' DELIMITER '*' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO transactions (user_id, type, stock_ticker, quantity, price, status) VALUES (1, 'buy', 'GOOG', 5, '52.11', 'complete');
 
@@ -59,7 +66,7 @@ CREATE TABLE IF NOT EXISTS finances (
   amount numeric NOT NULL,
   net_deposits numeric NOT NULL,
   avail_balance numeric,
-  datetime TIMESTAMP DEFAULT NOW()
+  datetime TEXT NOT NULL,
 );
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
@@ -69,6 +76,9 @@ CREATE TABLE IF NOT EXISTS performance (
   user_id integer REFERENCES users(id),
   performance_percentage numeric(4,1) NOT NULL
 );
+
+-- COPY performance (user_id, performance_percentage)
+-- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/performanceMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS chats (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -134,8 +144,8 @@ CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_finances_user_id ON finances(user_id);
 CREATE INDEX idx_performance_user_id ON performance(user_id);
 CREATE INDEX idx_portinstant_symbol ON portfolioinstant (user_id, symbol);
-CREATE INDEX idx_portmins_symbol_time ON portfoliomins (user_id, symbol, time DESC);
-CREATE INDEX idx_portdays_symbol_time ON portfoliodays (user_id, symbol, time DESC);
-CREATE INDEX idx_portweeks_symbol_time ON portfolioweeks (user_id, symbol, time DESC);
+CREATE INDEX idx_account_symbol_mins ON portfoliomins (user_id, symbol, time DESC);
+CREATE INDEX idx_account_symbol_days ON portfoliodays (user_id, symbol, time DESC);
+CREATE INDEX idx_account_symbol_weeks ON portfolioweeks (user_id, symbol, time DESC);
 CREATE INDEX idx_chats_sent_from ON chats(sent_from);
 CREATE INDEX idx_chats_sent_to ON chats(sent_to);

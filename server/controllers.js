@@ -316,6 +316,12 @@ module.exports = {
     // console.log(id)
     await pool.query(dbLeaderBoard.dbGetFriendList(id))
     .then((results) => {
+<<<<<<< HEAD
+      console.log(results);
+      var arr = results.rows
+      arr.push(id)
+      return arr;
+=======
       var arr = results.rows
       var friendIdArr = []
       for (var x = 0; x < arr.length; x++) {
@@ -323,6 +329,7 @@ module.exports = {
       }
       friendIdArr.push(Number(id))
       return friendIdArr;
+>>>>>>> 8b17f29ee3d996cbbd55e422c9d88319646f9d7e
     })
     .then(async (user_arr) => {
       const arr = JSON.stringify(user_arr)
