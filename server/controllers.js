@@ -5,6 +5,7 @@ const getQueries = require('./db/getQueries.js');
 const dbTransactions = require('./db/transactionQueries.js');
 const dbChats = require('./db/chatQueries.js');
 const dbFinances = require('./db/financeQueries.js');
+const dbAccounts = require('./db/accountQueries.js');
 const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const moment = require('moment');
 require('dotenv').config();
@@ -12,7 +13,7 @@ require('dotenv').config();
 module.exports = {
   //Portfolio routes
   getChart : async (req, res) => {
-    var accountNum = req.query.accountNum;
+    var user_id = req.query.user_id;
     var timeWindow = req.query.timeWindow;
     var isDone = false;
     const today = moment().day();
@@ -29,19 +30,19 @@ module.exports = {
     } else {
       var currentDateFormated = currentDate.format();
     }
-    if (!accountNum) {
+    if (!user_id) {
       res.status(400);
     }
     var symbols = [];
     const symbolQuery =  `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfoliomins
-      WHERE account = ${accountNum} AND type = 'stock')
+      WHERE user_id = ${user_id} AND type = 'stock')
       AS stocks,
       ARRAY (
         SELECT DISTINCT symbol
         FROM portfoliomins
-        WHERE account = ${accountNum} AND type = 'crypto')
+        WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
     .then((result) => {
@@ -110,7 +111,7 @@ module.exports = {
     };
     var cleanAlpacaData = portfolioHelper.cleanAlpacaData(timeWindow, historyData);
     var portfolioHistory;
-    await pool.query(getQueries.getPortfolioHistory(accountNum, timeObj.sqlTF, timeWindow, todayDate))
+    await pool.query(getQueries.getPortfolioHistory(user_id, timeObj.sqlTF, timeWindow, todayDate))
       .then((result) => {
         portfolioHistory = result.rows;
       })
@@ -126,7 +127,7 @@ module.exports = {
   },
 
   getAllocationAndPosition : async (req, res) => {
-    var accountNum = req.query.accountNum;
+    var user_id = req.query.user_id;
     var isDone = false;
     const today = moment().day();
     const todayDate = moment().format().slice(0,10);
@@ -142,7 +143,7 @@ module.exports = {
     } else {
       var startDateFormated = startDate.format();
     }
-    if (!accountNum) {
+    if (!user_id) {
       res.status(400);
     }
     var startDataCrypto = moment.utc().subtract(21,'minutes').format();
@@ -151,12 +152,12 @@ module.exports = {
     const symbolQuery =  `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfolioinstant
-      WHERE account = ${accountNum} AND type = 'stock')
+      WHERE user_id = ${user_id} AND type = 'stock')
       AS stocks,
       ARRAY (
         SELECT DISTINCT symbol
         FROM portfolioinstant
-        WHERE account = ${accountNum} AND type = 'crypto')
+        WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
     .then((result) => {
@@ -223,19 +224,17 @@ module.exports = {
           console.log(err);
         })
     };
-    var alloPosQuery = getQueries.getAlloPosQuery(accountNum);
+    var alloPosQuery = getQueries.getAlloPosQuery(user_id);
     await pool.query(alloPosQuery)
     .then((result) => {
       var incomingData = result.rows;
       var allocationData = portfolioHelper.getAllocationRatio(incomingData);
-      console.log(allocationData);
       var positionData = portfolioHelper.insertPosition(alpacaResults, allocationData);
       res.status(200).send(allocationData);
     })
     .catch((err) => {
       console.log(err);
     });
-
   },
   //Transaction Routes
   getTransactions: (req, res) => {
@@ -260,6 +259,8 @@ module.exports = {
       res.send(err);
     })
   },
+
+  //Chat Routes
   getChatLog: (req, res) => {
     pool.query(dbChats.dbGetChatLog(1))
     .then((result) => {
@@ -281,8 +282,19 @@ module.exports = {
       res.send(result.rows);
     })
   },
+
+  //Finances Routes
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
+    // pool.query()
+    // .then((result) => {
+    //   console.log(result);
+    //   res.end();
+    // })
+    // .catch((err) => {
+    //   console.log(err);
+    //   res.send(err);
+    // })
   },
 
   getFinances: (req, res) => {
@@ -367,25 +379,8 @@ module.exports = {
       res.send(err);
     })
   },
-  updateUserDetails: async (req, res) => {
-    var id = req.body.id
-    var firstName = req.body.firstname
-    var lastName = req.body.lastname
-    var userName = req.body.username
-    var photoURL = req.body.photourl
-    await pool.query(dbLeaderBoard.dbUpdateUserInfo(id, firstName, lastName, userName, photoURL))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
-  },
 
-
-  // Login
+  // Login & Accounts
   getUserByEmail: (req, res) => {
     console.log(req.query, '=====getUserByEmail req.query');
     const text = `SELECT * FROM users WHERE email = $1`;
@@ -395,31 +390,41 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
   getUserInfo: (req, res) => {
-    console.log(req.query, '=====req.query');
-    if (req.query) {
-      const mockResponse = {
-        rows: [
-          {
-            id: 1,
-            username: 'john_doe',
-            firstname: 'John',
-            lastname: 'Doe',
-            email: 'john.doe@example.com',
-            profilepic_url: 'https://example.com/images/john_doe_profile_pic.jpg',
-          },
-        ],
-        rowCount: 1,
-      };
-    //DATA TO TEST:
-    // const text = `SELECT * FROM users WHERE id = $1`;
-    // const values = [req.query.user_id];
-    // pool.query(text, values)
-      res.send(mockResponse);
-    }
+    pool.query(dbAccounts.dbGetUserInfo(req.params.id))
+    .then((result) => {
+      res.send(result.rows);
+    })
+    .catch(err => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+  updateUserDetails: (req, res) => {
+    pool.query(dbAccounts.dbUpdateUserInfo(req.params.id, req.body))
+    .then((result) => {
+      res.send('updated!');
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
+  },
+  updateBankInfo: (req, res) => {
+    pool.query(dbAccounts.dbUpdateBankInfo(req.params.id, req.body))
+    .then((result) => {
+      res.send('updated!');
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
   },
 
   // login
@@ -437,32 +442,41 @@ module.exports = {
       console.log('addUser succeeds')
       res.send(result);
     })
-    .catch(e => {res.send(e); console.error(e.stack)})
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
-   updateUser: (req, res) => {
+  updateUserInfo: (req, res) => {
     const userInfo = req.body.data;
     const query = `
       UPDATE users
-      SET username = $1, firstname = $2, lastname = $3, email = $4, profilepic_URL = $5
-      WHERE id = $6;
+      SET
+        username = COALESCE($1, username),
+        firstname = COALESCE($2, firstname),
+        lastname = COALESCE($3, lastname),
+        profilepic_URL = COALESCE($4, profilepic_URL),
+        bank = COALESCE($5, bank),
+        accountNumber = COALESCE($6, accountNumber),
+      WHERE id = $7;
     `;
-
     const values = [
       userInfo.username,
       userInfo.firstname,
       userInfo.lastname,
-      userInfo.email,
       userInfo.profilePic,
+      userInfo.bank,
+      userInfo.accountNumber,
       userInfo.id,
     ];
 
     try {
       pool.query(query, values)
-      .then(result => {
-        console.log('update user succeeds')
-        res.send(result);
-      })
+        .then(result => {
+          console.log('update user succeeds');
+          res.send(result);
+        })
     } catch (error) {
       console.error('Error updating user data:', error);
       throw error;
@@ -477,7 +491,7 @@ module.exports = {
     const text = `SELECT f.id, u.username, u.profilepic_URL
     FROM friendlist f
     JOIN users u ON u.id = f.friend_id
-    WHERE f.user_id = $1 AND f.status = 'pending';`
+    WHERE f.user_id = $1 AND f.status = 'pending' LIMIT 7`
 
     const values = [req.query.user_id];
 
@@ -485,7 +499,10 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
   // friendslist
@@ -501,7 +518,10 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
   // friendslist
@@ -518,9 +538,13 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
+  // friendslist
   getRecommendedFriends: (req, res) => {
     console.log(req.query, '=====getRecommendedFriends req.query');
     const text = `SELECT *
@@ -541,7 +565,10 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   }
 
 }
