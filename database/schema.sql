@@ -12,61 +12,6 @@ CREATE EXTENSION IF NOT EXISTS timescaledb;
 
 SET TIME ZONE UTC;
 
-CREATE TABLE IF NOT EXISTS portfolioinstant (
-  account INTEGER REFERENCES users(id),
-  symbol TEXT,
-  type TEXT,
-  qty INTEGER,
-  avg_cost DOUBLE PRECISION,
-  buy_pwr INTEGER,
-  CONSTRAINT fk_buypwr
-    FOREIGN KEY(buy_pwr)
-      REFERENCES buypwr(id)
-);
-
--- COPY portfolioinstant(account, symbol, type, qty, avg_cost, buy_pwr)
--- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
-
-CREATE TABLE IF NOT EXISTS portfoliomins (
-  account INTEGER REFERENCES users(id),
-  symbol TEXT,
-  type TEXT,
-  time TIMESTAMPTZ,
-  qty INTEGER,
-  avg_cost DOUBLE PRECISION,
-  buy_pwr DOUBLE PRECISION
-);
-
--- COPY portfoliomins (account, symbol, type, time, qty, avg_cost, buy_pwr)
--- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
-
-CREATE TABLE IF NOT EXISTS portfoliodays (
-  account INTEGER REFERENCES users(id),
-  symbol TEXT,
-  type TEXT,
-  time DATE,
-  qty INTEGER,
-  avg_cost DOUBLE PRECISION,
-  buy_pwr DOUBLE PRECISION
-);
-
--- COPY portfoliodays (account, symbol, type, time, qty, avg_cost, buy_pwr)
--- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/daysmock.csv' DELIMITER ',' CSV HEADER;
-
-CREATE TABLE IF NOT EXISTS portfolioweeks (
-  account INTEGER REFERENCES users(id),
-  symbol TEXT,
-  type TEXT,
-  time DATE,
-  qty INTEGER,
-  avg_cost DOUBLE PRECISION,
-  buy_pwr DOUBLE PRECISION
-);
-
--- COPY portfolioweeks (account, symbol, type, time, qty, avg_cost, buy_pwr)
--- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
-
-
 CREATE TYPE trade_type AS ENUM ('buy', 'sell');
 CREATE TYPE status_type AS ENUM ('complete', 'pending');
 CREATE TYPE trans_type AS ENUM ('bank', 'trade');
