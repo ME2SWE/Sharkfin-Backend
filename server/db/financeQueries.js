@@ -21,8 +21,13 @@ const dbFinances = {
       COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances ) AND user_id = ${data.user_id}), 0) + ${data.amount});`;
     }
     return query;
+  },
+  dbGetFinances: (id) => {
+    let query = `SELECT * FROM finances WHERE user_id = ${id}`
+    return query;
   }
 }
+
 
 //I used this query to test negative amounts too and it worked
 

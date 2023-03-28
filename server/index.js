@@ -29,6 +29,7 @@ app.get('/pchart', controllers.getChart);
 app.get('/pallocation', controllers.getAllocationAndPosition);
 
 //Finances
+app.get('/finances/:id', controllers.getFinances);
 app.post('/finances', controllers.postFinances);
 //app.get
 
