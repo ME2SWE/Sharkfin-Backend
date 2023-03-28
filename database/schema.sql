@@ -95,19 +95,19 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
   user_id INTEGER REFERENCES users(id),
   symbol TEXT,
   type TEXT,
-  qty INTEGER,
+  qty FLOAT,
   avg_cost DOUBLE PRECISION
 );
 
-COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
-FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliomins (
   user_id INTEGER REFERENCES users(id),
   symbol TEXT,
   type TEXT,
   time TIMESTAMPTZ,
-  qty INTEGER,
+  qty FLOAT,
   avg_cost DOUBLE PRECISION,
   buy_pwr DOUBLE PRECISION
 );
@@ -120,7 +120,7 @@ CREATE TABLE IF NOT EXISTS portfoliodays (
   symbol TEXT,
   type TEXT,
   time DATE,
-  qty INTEGER,
+  qty FLOAT,
   avg_cost DOUBLE PRECISION,
   buy_pwr DOUBLE PRECISION
 );
@@ -133,7 +133,7 @@ CREATE TABLE IF NOT EXISTS portfolioweeks (
   symbol TEXT,
   type TEXT,
   time DATE,
-  qty INTEGER,
+  qty FLOAT,
   avg_cost DOUBLE PRECISION,
   buy_pwr DOUBLE PRECISION
 );
@@ -147,8 +147,8 @@ CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_finances_user_id ON finances(user_id);
 CREATE INDEX idx_performance_user_id ON performance(user_id);
 CREATE INDEX idx_portinstant_symbol ON portfolioinstant (user_id, symbol);
-CREATE INDEX idx_account_symbol_mins ON portfoliomins (user_id, symbol, time DESC);
-CREATE INDEX idx_account_symbol_days ON portfoliodays (user_id, symbol, time DESC);
-CREATE INDEX idx_account_symbol_weeks ON portfolioweeks (user_id, symbol, time DESC);
+CREATE INDEX idx_portmins_symbol_time ON portfoliomins (user_id, symbol, time DESC);
+CREATE INDEX idx_portdays_symbol_time ON portfoliodays (user_id, symbol, time DESC);
+CREATE INDEX idx_portweeks_symbol_time ON portfolioweeks (user_id, symbol, time DESC);
 CREATE INDEX idx_chats_sent_from ON chats(sent_from);
 CREATE INDEX idx_chats_sent_to ON chats(sent_to);
