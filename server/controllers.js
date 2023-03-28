@@ -549,17 +549,30 @@ module.exports = {
       })
       .catch(e => console.error(e.stack))
   },
-  getAssetData: (req, res) => {
-    console.log(req.query.userid)
-    // pool.query(dbStockCrypto.getAssetData(userid))
-    //   .then((result) => {
-    //     res.send(result.rows);
-    //   })
-    //   .catch((err) => {
-    //     res.send(err);
-    //   })
-
-
+  getAvailBalance: (req, res) => {
+    // console.log(req.query.userid)
+    var userid = req.query.userid
+    pool.query(dbStockCrypto.getAvailBalance(userid))
+      .then((result) => {
+        //console.log(result.rows)
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
+  },
+  getHoldingAmount: (req, res) => {
+    console.log(req.query)
+    var userid = req.query.userid
+    var symbol = req.query.symbol
+    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
+      .then((result) => {
+        console.log(result.rows)
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
   }
 
 }

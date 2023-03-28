@@ -52,10 +52,10 @@ app.post('/updateFriendStatus', controllers.updateFriendStatus);
 app.post('/addFriend', controllers.addFriend);
 app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
-//Get Account# from Finance table
-//app.get('/getAccountNumber', controllers.getAccountNumber)
+
 //Get buying power and holding from portfolioinstant
-app.get('/getAssetData', controllers.getAssetData)
+app.get('/getAvailBalance', controllers.getAvailBalance)
+app.get('/getHoldingAmount', controllers.getHoldingAmount)
 
 //Update buying power and holding to portfolioinstant
 //app.put('/updateAssetData', controllers.updateAssetData)

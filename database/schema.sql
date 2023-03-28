@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS accounts (
   username TEXT NOT NULL
 );
 
-COPY accounts (account, username)
+COPY accounts (account, username) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
 --FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
 FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/accountMock.csv' DELIMITER ',' CSV HEADER;
 
@@ -143,6 +143,9 @@ CREATE TABLE IF NOT EXISTS finances (
   avail_balance numeric,
   datetime TEXT NOT NULL
 );
+
+-- COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/financeMock.csv' DELIMITER ',' CSV HEADER;
+
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
 
