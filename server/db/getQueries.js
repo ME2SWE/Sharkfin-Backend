@@ -44,10 +44,10 @@ const getQueries = {
 
   getAlloPosQuery: (user_id) => {
     var query = `SELECT
-    p.account, p.symbol, p.qty, p.avg_cost, b.buy_pwr
+    p.user_id, p.symbol, p.qty, p.avg_cost, f.avail_balance AS buy_pwr
     FROM portfolioinstant p
-    LEFT JOIN buypwr b ON b.id = p.buy_pwr
-    WHERE user_id = ${user_id};`;
+    LEFT JOIN finances f ON f.user_id = p.user_id
+    WHERE p.user_id = ${user_id} AND f.id = (select max(id) from finances);`;
     return query;
   },
 
@@ -59,4 +59,8 @@ const getQueries = {
 
 module.exports = getQueries;
 
+// SELECT
+// i.user_id, i.symbol, i.type, i.qty, i.avg_cost, f.avail_balance AS buy_pwr FROM portfolioinstant i
+// LEFT JOIN finances f ON f.user_id = i.user_id
+// WHERE i.user_id = 1 AND id = (select max(id) from finances);
 
