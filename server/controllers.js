@@ -14,7 +14,7 @@ require('dotenv').config();
 module.exports = {
   //Portfolio routes
   getChart: async (req, res) => {
-    var accountNum = req.query.accountNum;
+    var user_id = req.query.user_id;
     var timeWindow = req.query.timeWindow;
     var isDone = false;
     const today = moment().day();
@@ -31,19 +31,19 @@ module.exports = {
     } else {
       var currentDateFormated = currentDate.format();
     }
-    if (!accountNum) {
+    if (!user_id) {
       res.status(400);
     }
     var symbols = [];
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfoliomins
-      WHERE account = ${accountNum} AND type = 'stock')
+      WHERE account = ${user_id} AND type = 'stock')
       AS stocks,
       ARRAY (
         SELECT DISTINCT symbol
         FROM portfoliomins
-        WHERE account = ${accountNum} AND type = 'crypto')
+        WHERE account = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
       .then((result) => {
@@ -112,7 +112,7 @@ module.exports = {
     };
     var cleanAlpacaData = portfolioHelper.cleanAlpacaData(timeWindow, historyData);
     var portfolioHistory;
-    await pool.query(getQueries.getPortfolioHistory(accountNum, timeObj.sqlTF, timeWindow, todayDate))
+    await pool.query(getQueries.getPortfolioHistory(user_id, timeObj.sqlTF, timeWindow, todayDate))
       .then((result) => {
         portfolioHistory = result.rows;
       })
@@ -128,7 +128,7 @@ module.exports = {
   },
 
   getAllocationAndPosition: async (req, res) => {
-    var accountNum = req.query.accountNum;
+    var user_id = req.query.user_id;
     var isDone = false;
     const today = moment().day();
     const todayDate = moment().format().slice(0, 10);
@@ -144,7 +144,7 @@ module.exports = {
     } else {
       var startDateFormated = startDate.format();
     }
-    if (!accountNum) {
+    if (!user_id) {
       res.status(400);
     }
     var startDataCrypto = moment.utc().subtract(21, 'minutes').format();
@@ -153,12 +153,12 @@ module.exports = {
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfolioinstant
-      WHERE account = ${accountNum} AND type = 'stock')
+      WHERE account = ${user_id} AND type = 'stock')
       AS stocks,
       ARRAY (
         SELECT DISTINCT symbol
         FROM portfolioinstant
-        WHERE account = ${accountNum} AND type = 'crypto')
+        WHERE account = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
       .then((result) => {
@@ -225,7 +225,7 @@ module.exports = {
           console.log(err);
         })
     };
-    var alloPosQuery = getQueries.getAlloPosQuery(accountNum);
+    var alloPosQuery = getQueries.getAlloPosQuery(user_id);
     await pool.query(alloPosQuery)
       .then((result) => {
         var incomingData = result.rows;
@@ -314,15 +314,20 @@ module.exports = {
   //LeaderBoard routes
   getFriendBoard: async (req, res) => {
     var id = req.query.id
-    console.log(id)
-    await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(id))
+    // console.log(id)
+    await pool.query(dbLeaderBoard.dbGetFriendList(id))
       .then((results) => {
-        var arr = result.rows
-        arr.push(id)
-        return arr;
+        var arr = results.rows
+        var friendIdArr = []
+        for (var x = 0; x < arr.length; x++) {
+          friendIdArr.push(arr[x].friend_id)
+        }
+        friendIdArr.push(Number(id))
+        return friendIdArr;
       })
       .then(async (user_arr) => {
-        const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(user_arr))
+        const arr = JSON.stringify(user_arr)
+        const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(arr))
         res.status(200).send(result.rows);
       })
       .catch((err) => {
@@ -334,7 +339,6 @@ module.exports = {
   getGlobalBoard: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
       .then((result) => {
-        console.log(result)
         res.status(200).send(result.rows);
       })
       .catch((err) => {

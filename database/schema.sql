@@ -166,6 +166,56 @@ CREATE TABLE IF NOT EXISTS chats (
   datetime TEXT NOT NULL
 );
 
+CREATE TABLE IF NOT EXISTS portfolioinstant (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT,
+  type TEXT,
+  qty INTEGER,
+  avg_cost DOUBLE PRECISION
+);
+
+-- COPY portfolioinstant(account, symbol, type, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+
+CREATE TABLE IF NOT EXISTS portfoliomins (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT,
+  type TEXT,
+  time TIMESTAMPTZ,
+  qty INTEGER,
+  avg_cost DOUBLE PRECISION,
+  buy_pwr DOUBLE PRECISION
+);
+
+-- COPY portfoliomins (account, symbol, type, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
+
+CREATE TABLE IF NOT EXISTS portfoliodays (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT,
+  type TEXT,
+  time DATE,
+  qty INTEGER,
+  avg_cost DOUBLE PRECISION,
+  buy_pwr DOUBLE PRECISION
+);
+
+-- COPY portfoliodays (user_id, symbol, type, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/daysMock.csv' DELIMITER ',' CSV HEADER;
+
+CREATE TABLE IF NOT EXISTS portfolioweeks (
+  user_id INTEGER REFERENCES users(id),
+  symbol TEXT,
+  type TEXT,
+  time DATE,
+  qty INTEGER,
+  avg_cost DOUBLE PRECISION,
+  buy_pwr DOUBLE PRECISION
+);
+
+-- COPY portfolioweeks (user_id, symbol, type, time, qty, avg_cost, buy_pwr)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
+
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
 CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);
 CREATE INDEX idx_transactions_user_id ON transactions(user_id);
