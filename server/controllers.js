@@ -268,7 +268,7 @@ module.exports = {
   },
   //Transaction Routes
   getTransactions: (req, res) => {
-    pool.query(dbTransactions.dbGetTransactions(1))
+    pool.query(dbTransactions.dbGetTransactions(req.params.id))
       .then((result) => {
         res.send(result.rows);
       })
@@ -316,26 +316,33 @@ module.exports = {
   //Finances Routes
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
-    // pool.query()
-    // .then((result) => {
-    //   console.log(result);
-    //   res.end();
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    //   res.send(err);
-    // })
+    pool.query(dbFinances.dbPostFinance(req.body))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
   },
 
   getFinances: (req, res) => {
-    console.log(req.query, '=====req.query');
-    const text = `SELECT * FROM finances WHERE user_id = $1`;
-    const values = [req.query.user_id];
-    pool.query(text, values)
-      .then(result => {
-        res.send(result);
-      })
-      .catch(e => console.error(e.stack))
+    pool.query(dbFinances.dbGetFinances(req.params.id))
+    .then(result => {
+      res.send(result.rows);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  getBalance: (req, res) => {
+    pool.query(dbFinances.dbGetBalance(req.params.id))
+    .then(result => {
+      res.send(result.rows);
+    })
+    .catch(err => {
+      console.log(err);
+    })
   },
 
   //LeaderBoard routes

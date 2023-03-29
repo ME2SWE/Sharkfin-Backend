@@ -1,4 +1,4 @@
-account,symbol,type,time,qty,avg_cost,buy_pwr
+user_id,symbol,type,time,qty,avg_cost,buy_pwr
 1,TSLA,stock,2023-03-17 13:09:18,2,20.7,500
 2,TSLA,stock,2023-03-17 13:09:18,52,8,500
 1,BTC/USD,crypto,2023-03-17 13:09:18,99,30.5,500

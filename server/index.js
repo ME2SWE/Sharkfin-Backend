@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(cors());
 
 // Transaction Log
-app.get('/transactions', controllers.getTransactions);
+app.get('/transactions/:id', controllers.getTransactions);
 app.post('/transactions', controllers.postTransaction);
 
 //Chat Log
@@ -28,7 +28,9 @@ app.get('/pchart', controllers.getChart);
 app.get('/pallocation', controllers.getAllocationAndPosition);
 
 //Finances
+app.get('/finances/:id', controllers.getFinances);
 app.post('/finances', controllers.postFinances);
+app.get('/finances/:id/balance', controllers.getBalance);
 //app.get
 
 //Leader board
@@ -52,7 +54,7 @@ app.post('/addFriend', controllers.addFriend);
 app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
 //Get buying power and holding from portfolioinstant
-app.get('/getAvailBalance', controllers.getAvailBalance)
+// app.get('/getAvailBalance', controllers.getAvailBalance)
 app.get('/getHoldingAmount', controllers.getHoldingAmount)
 
 //Update buying power and holding to portfolioinstant
