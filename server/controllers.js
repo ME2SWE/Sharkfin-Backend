@@ -34,6 +34,10 @@ module.exports = {
     if (!user_id) {
       res.status(400);
     }
+    if (user_id === 0) {
+      res.send({});
+      return;
+    }
     var symbols = [];
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
@@ -147,6 +151,10 @@ module.exports = {
     }
     if (!user_id) {
       res.status(400);
+    }
+    if (user_id === 0) {
+      res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
+      return;
     }
     var startDataCrypto = moment.utc().subtract(21, 'minutes').format();
     var endDate = moment.utc().subtract(15, 'minutes').format();
