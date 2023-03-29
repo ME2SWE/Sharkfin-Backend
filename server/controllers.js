@@ -587,6 +587,32 @@ module.exports = {
         console.error(e.stack);
         res.send(e);
       })
+  },
+
+  getAvailBalance: (req, res) => {
+    // console.log(req.query.userid)
+    var userid = req.query.userid
+    pool.query(dbStockCrypto.getAvailBalance(userid))
+      .then((result) => {
+        //console.log(result.rows)
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
+  },
+  getHoldingAmount: (req, res) => {
+    console.log(req.query)
+    var userid = req.query.userid
+    var symbol = req.query.symbol
+    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
+      .then((result) => {
+        console.log(result.rows)
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
   }
 
 }
