@@ -75,6 +75,7 @@ COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,dateti
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
 insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',0,1000,1000);
 insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',1000,2000,2000);
+insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (3,'bank',0,500,500);
 
 CREATE TABLE IF NOT EXISTS performance (
   id SERIAL PRIMARY KEY NOT NULL,

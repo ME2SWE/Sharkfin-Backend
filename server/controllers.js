@@ -128,7 +128,8 @@ module.exports = {
   },
 
   getAllocationAndPosition: async (req, res) => {
-    var user_id = req.query.user_id;
+    // var user_id = req.query.user_id;
+    var user_id = 3;
     var isDone = false;
     const today = moment().day();
     const todayDate = moment().format().slice(0, 10);
@@ -162,12 +163,21 @@ module.exports = {
          AS cryptos;`;
     await pool.query(symbolQuery)
       .then((result) => {
-        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
-          res.send({});
+        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
+          pool.query(getQueries.getAvailBalance(user_id))
+            .then((result) => {
+              if (result.rows.length === 0) {
+                res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
+              } else {
+                res.send({ totalNetWorth: result.rows[0].avail_balance, position: [], allocation: { symbols: ['CASH'], ratios: [100] } });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            })
           isDone = true;
           return;
         }
-        console.log(result.rows[0].stocks)
         stockSymbols = result.rows[0].stocks;
         cryptoSymbols = result.rows[0].cryptos;
       })
@@ -391,7 +401,10 @@ module.exports = {
       .then(result => {
         res.send(result);
       })
-      .catch(e => console.error(e.stack))
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   getUserInfo: (req, res) => {
@@ -440,7 +453,10 @@ module.exports = {
         console.log('addUser succeeds')
         res.send(result);
       })
-      .catch(e => console.error(e.stack))
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   updateUserInfo: (req, res) => {
@@ -486,7 +502,7 @@ module.exports = {
     const text = `SELECT f.id, u.username, u.profilepic_URL
     FROM friendlist f
     JOIN users u ON u.id = f.friend_id
-    WHERE f.user_id = $1 AND f.status = 'pending';`
+    WHERE f.user_id = $1 AND f.status = 'pending' LIMIT 7`
 
     const values = [req.query.user_id];
 
@@ -494,7 +510,10 @@ module.exports = {
       .then(result => {
         res.send(result);
       })
-      .catch(e => console.error(e.stack))
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   // friendslist
@@ -510,7 +529,10 @@ module.exports = {
       .then(result => {
         res.send(result);
       })
-      .catch(e => console.error(e.stack))
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   // friendslist
@@ -527,9 +549,13 @@ module.exports = {
       .then(result => {
         res.send(result);
       })
-      .catch(e => console.error(e.stack))
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
+  // friendslist
   getRecommendedFriends: (req, res) => {
     console.log(req.query, '=====getRecommendedFriends req.query');
     const text = `SELECT *
@@ -550,30 +576,9 @@ module.exports = {
       .then(result => {
         res.send(result);
       })
-      .catch(e => console.error(e.stack))
-  },
-  getAvailBalance: (req, res) => {
-    // console.log(req.query.userid)
-    var userid = req.query.userid
-    pool.query(dbStockCrypto.getAvailBalance(userid))
-      .then((result) => {
-        //console.log(result.rows)
-        res.send(result.rows);
-      })
-      .catch((err) => {
-        res.send(err);
-      })
-  },
-  getHoldingAmount: (req, res) => {
-    var userid = req.query.userid
-    var symbol = req.query.symbol.toUpperCase()
-    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
-      .then((result) => {
-        console.log(result.rows)
-        res.send(result.rows);
-      })
-      .catch((err) => {
-        res.send(err);
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
       })
   }
 
