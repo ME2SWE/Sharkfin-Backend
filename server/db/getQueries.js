@@ -42,6 +42,14 @@ const getQueries = {
     }
   },
 
+  getAvailBalance: (user_id) => {
+    var query = `SELECT
+    avail_balance
+    FROM finances
+    WHERE user_id = ${user_id} AND id = (SELECT MAX(id) FROM finances);`;
+    return query;
+  },
+
   getAlloPosQuery: (user_id) => {
     var query = `SELECT
     p.user_id, p.symbol, p.qty, p.avg_cost, f.avail_balance AS buy_pwr

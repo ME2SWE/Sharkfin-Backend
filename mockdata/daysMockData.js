@@ -9,7 +9,7 @@ function generateMockData() {
   const interval = 1; // 1 day
   const symbols = ["AAPL", "GOOGL","TSLA", "BTC/USD", "DOGE/USD"];
   const crypto = {'BTC/USD' : 1, 'DOGE/USD' : 1};
-  const accountnums = [1, 2];
+  const userIDs = [1, 2];
   const data = [];
   var count = 0;
   // Loop through each time interval between start and end date
@@ -23,7 +23,7 @@ function generateMockData() {
         } else {
           var type = 'stock';
         }
-        accountnums.forEach(accountnum => {
+        userIDs.forEach(userID => {
           // Generate random values for each column
           const time = currentTime.format().slice(0, 19).replace('T', ' ').toString(); // remove milliseconds
           const qty = Math.floor(Math.random() * 100) + 1; // generate a random 1 and 100
@@ -31,7 +31,7 @@ function generateMockData() {
           const buy_pwr = 400;
           if (count > 3) {
             data.push({
-              account: accountnum,
+              user_id: userID,
               symbol: symbol,
               type: type,
               time: time,
@@ -46,7 +46,7 @@ function generateMockData() {
     // }
   }
   const fileName = 'daysMock.csv'
-  const fields = ["account","symbol","type","time","qty","avg_cost","buy_pwr"];
+  const fields = ["user_id","symbol","type","time","qty","avg_cost","buy_pwr"];
   const json2csvParser = new Parser({ fields });
   const csv = json2csvParser.parse(data);
   fs.writeFile(fileName, csv, function (err) {
