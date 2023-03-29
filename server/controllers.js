@@ -127,7 +127,8 @@ module.exports = {
   },
 
   getAllocationAndPosition : async (req, res) => {
-    var user_id = req.query.user_id;
+    // var user_id = req.query.user_id;
+    var user_id = 3;
     var isDone = false;
     const today = moment().day();
     const todayDate = moment().format().slice(0,10);
@@ -161,8 +162,18 @@ module.exports = {
          AS cryptos;`;
     await pool.query(symbolQuery)
     .then((result) => {
-      if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
-        res.send({});
+      if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
+        pool.query(getQueries.getAvailBalance(user_id))
+        .then((result) => {
+          if (result.rows.length === 0) {
+            res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
+          } else {
+            res.send({totalNetWorth: result.rows[0].avail_balance, position: [], allocation : {symbols: ['CASH'], ratios: [100]}});
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
         isDone = true;
         return;
       }
