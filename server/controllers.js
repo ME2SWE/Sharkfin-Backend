@@ -393,15 +393,16 @@ module.exports = {
   },
 
   getUserDetail: async (req, res) => {
-    await pool.query(dbLeaderBoard.dbGetUserDetail(req.body.id))
-      .then((result) => {
-        console.log(result);
-        res.end();
-      })
-      .catch((err) => {
-        console.log(err);
-        res.send(err);
-      })
+    await pool.query(dbLeaderBoard.dbGetUserDetail(req.query.id))
+    .then((result) => {
+      console.log(result);
+      res.status(200).send(result.rows[0])
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
   },
 
   updatePicRUL: async (req, res) => {
