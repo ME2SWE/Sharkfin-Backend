@@ -133,7 +133,7 @@ module.exports = {
 
   getAllocationAndPosition: async (req, res) => {
     // var user_id = req.query.user_id;
-    var user_id = 3;
+    var user_id = 1;
     var isDone = false;
     const today = moment().day();
     const todayDate = moment().format().slice(0, 10);

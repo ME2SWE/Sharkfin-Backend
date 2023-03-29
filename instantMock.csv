@@ -1,4 +1,4 @@
-account,symbol,qty,avg_cost
+user_id,symbol,qty,avg_cost
 1,TSLA,stock,50,26.1
 2,TSLA,stock,88,51.8
 1,BTC/USD,crypto,100,4.2
