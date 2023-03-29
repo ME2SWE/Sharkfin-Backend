@@ -300,9 +300,19 @@ module.exports = {
   getFinances: (req, res) => {
     pool.query(dbFinances.dbGetFinances(req.params.id))
     .then(result => {
-      res.send(result);
+      res.send(result.rows);
     })
     .catch(e => console.error(e.stack))
+  },
+
+  getBalance: (req, res) => {
+    pool.query(dbFinances.dbGetBalance(req.params.id))
+    .then(result => {
+      res.send(result.rows);
+    })
+    .catch(err => {
+      console.log(err);
+    })
   },
 
   //LeaderBoard routes

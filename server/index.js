@@ -31,6 +31,7 @@ app.get('/pallocation', controllers.getAllocationAndPosition);
 //Finances
 app.get('/finances/:id', controllers.getFinances);
 app.post('/finances', controllers.postFinances);
+app.get('/finances/:id/balance', controllers.getBalance);
 //app.get
 
 //Leader board
