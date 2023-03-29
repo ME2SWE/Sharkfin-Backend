@@ -20,7 +20,7 @@ const dbFinances = {
     return query;
   },
   dbGetBalance: (id) => {
-    let query = `SELECT avail_balance FROM finances WHERE user_id = ${id} ORDER BY datetime DESC LIMIT 1;`
+    let query = `SELECT avail_balance, net_deposits FROM finances WHERE user_id = ${id} ORDER BY datetime DESC LIMIT 1;`
     return query;
   }
 }
