@@ -16,7 +16,7 @@ app.use(express.json());
 app.use(cors());
 
 // Transaction Log
-app.get('/transactions', controllers.getTransactions);
+app.get('/transactions/:id', controllers.getTransactions);
 app.post('/transactions', controllers.postTransaction);
 
 //Chat Log

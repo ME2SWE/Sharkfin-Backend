@@ -26,12 +26,4 @@ const dbFinances = {
 }
 
 
-//I used this query to test negative amounts too and it worked
-
-// INSERT INTO finances (user_id, transaction_type, amount, net_deposits, avail_balance)
-//       VALUES (1, 'trade', -1000,
-//       (SELECT net_deposits FROM finances WHERE id = (SELECT MAX(id) FROM finances ) AND user_id = 1),
-//       COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances) AND user_id = 1), 0) + -1000);
-
-
 module.exports = dbFinances;

@@ -250,7 +250,7 @@ module.exports = {
   },
   //Transaction Routes
   getTransactions: (req, res) => {
-    pool.query(dbTransactions.dbGetTransactions(1))
+    pool.query(dbTransactions.dbGetTransactions(req.params.id))
       .then((result) => {
         res.send(result.rows);
       })
