@@ -34,12 +34,15 @@ module.exports = {
     if (!user_id) {
       res.status(400);
     }
+    user_id = parseInt(user_id);
     if (user_id === 0) {
       res.send({});
       return;
     }
     var symbols = [];
-    const symbolQuery = `SELECT ARRAY (
+    var stockSymbols = [];
+    var cryptoSymbols = [];
+    const symbolQuery =  `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfoliomins
       WHERE user_id = ${user_id} AND type = 'stock')
@@ -49,22 +52,25 @@ module.exports = {
         FROM portfoliomins
         WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
+    console.log(symbolQuery);
     await pool.query(symbolQuery)
-      .then((result) => {
-        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
-          res.send({});
-          isDone = true;
-          return;
-        }
-        stockSymbols = result.rows[0].stocks;
-        cryptoSymbols = result.rows[0].cryptos;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    .then((result) => {
+      console.log(result);
+      if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
+        res.send({});
+        isDone = true;
+        return;
+      }
+      stockSymbols = result.rows[0].stocks;
+      cryptoSymbols = result.rows[0].cryptos;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
     if (isDone) {
       return;
     };
+    console.log(stockSymbols, cryptoSymbols);
     var timeObj = portfolioHelper.handleTimeFrame(timeWindow);
     var historyData = {};
     if (stockSymbols.length !== 0) {
@@ -118,6 +124,7 @@ module.exports = {
     var portfolioHistory;
     await pool.query(getQueries.getPortfolioHistory(user_id, timeObj.sqlTF, timeWindow, todayDate))
       .then((result) => {
+        console.log(result);
         portfolioHistory = result.rows;
       })
       .catch((err) => {
@@ -131,12 +138,13 @@ module.exports = {
     res.send(result);
   },
 
-  getAllocationAndPosition: async (req, res) => {
-    // var user_id = req.query.user_id;
-    var user_id = 1;
+  getAllocationAndPosition : async (req, res) => {
+    var user_id = req.query.user_id;
     var isDone = false;
     const today = moment().day();
-    const todayDate = moment().format().slice(0, 10);
+    const todayDate = moment().format().slice(0,10);
+    var stockSymbols = [];
+    var cryptoSymbols = [];
     if (today === 6) {
       var startDate = moment().subtract(1, 'days');
     } else if (today === 0) {
@@ -152,12 +160,13 @@ module.exports = {
     if (!user_id) {
       res.status(400);
     }
+    user_id = parseInt(user_id);
     if (user_id === 0) {
       res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
       return;
     }
-    var startDataCrypto = moment.utc().subtract(21, 'minutes').format();
-    var endDate = moment.utc().subtract(15, 'minutes').format();
+    var startDataCrypto = moment.utc().subtract(21,'minutes').format();
+    var endDate = moment.utc().subtract(15,'minutes').format();
     var alpacaMultiBarsURL = process.env.ALPACA_STOCK_URL;
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
@@ -170,28 +179,29 @@ module.exports = {
         WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
-      .then((result) => {
-        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
-          pool.query(getQueries.getAvailBalance(user_id))
-            .then((result) => {
-              if (result.rows.length === 0) {
-                res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
-              } else {
-                res.send({ totalNetWorth: result.rows[0].avail_balance, position: [], allocation: { symbols: ['CASH'], ratios: [100] } });
-              }
-            })
-            .catch((err) => {
-              console.log(err);
-            })
+    .then((result) => {
+      if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
+        pool.query(getQueries.getAvailBalance(user_id))
+        .then((result) => {
+          if (result.rows.length === 0) {
+            res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
+          } else {
+            res.send({totalNetWorth: result.rows[0].avail_balance, position: [], allocation : {symbols: ['CASH'], ratios: [100]}});
+          }
           isDone = true;
           return;
-        }
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+      } else {
         stockSymbols = result.rows[0].stocks;
         cryptoSymbols = result.rows[0].cryptos;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      }
+    })
+    .catch((err) => {
+      console.log(err);
+    });
     if (isDone) {
       return;
     };
