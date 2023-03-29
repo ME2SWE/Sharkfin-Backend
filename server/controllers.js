@@ -400,7 +400,10 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
   getUserInfo: (req, res) => {
@@ -449,7 +452,10 @@ module.exports = {
       console.log('addUser succeeds')
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
   updateUserInfo: (req, res) => {
@@ -495,7 +501,7 @@ module.exports = {
     const text = `SELECT f.id, u.username, u.profilepic_URL
     FROM friendlist f
     JOIN users u ON u.id = f.friend_id
-    WHERE f.user_id = $1 AND f.status = 'pending';`
+    WHERE f.user_id = $1 AND f.status = 'pending' LIMIT 7`
 
     const values = [req.query.user_id];
 
@@ -503,7 +509,10 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
   // friendslist
@@ -519,7 +528,10 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
   // friendslist
@@ -536,9 +548,13 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   },
 
+  // friendslist
   getRecommendedFriends: (req, res) => {
     console.log(req.query, '=====getRecommendedFriends req.query');
     const text = `SELECT *
@@ -559,7 +575,10 @@ module.exports = {
     .then(result => {
       res.send(result);
     })
-    .catch(e => console.error(e.stack))
+    .catch(e => {
+      console.error(e.stack);
+      res.send(e);
+    })
   }
 
 }
