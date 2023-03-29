@@ -42,13 +42,13 @@ const getQueries = {
     }
   },
 
-  getAvailBalance: (user_id) => {
-    var query = `SELECT
-    avail_balance
-    FROM finances
-    WHERE user_id = ${user_id} AND id = (SELECT MAX(id) FROM finances);`;
-    return query;
-  },
+  // getAvailBalance: (user_id) => {
+  //   var query = `SELECT
+  //   avail_balance
+  //   FROM finances
+  //   WHERE user_id = ${user_id} AND id = (SELECT MAX(id) FROM finances);`;
+  //   return query;
+  // },
 
   getAlloPosQuery: (user_id) => {
     var query = `WITH recentfinance AS (

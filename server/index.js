@@ -54,7 +54,7 @@ app.post('/addFriend', controllers.addFriend);
 app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
 //Get buying power and holding from portfolioinstant
-app.get('/getAvailBalance', controllers.getAvailBalance)
+// app.get('/getAvailBalance', controllers.getAvailBalance)
 app.get('/getHoldingAmount', controllers.getHoldingAmount)
 
 //Update buying power and holding to portfolioinstant
