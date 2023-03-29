@@ -5,13 +5,9 @@ const dbStockCrypto = {
     return queryString
   },
   getHoldingAmount: (userid, symbol) => {
+    console.log(userid, symbol)
     var queryString = `
-      SELECT qty FROM users AS u
-      INNER JOIN accounts AS a
-      on u.username = a.username
-      INNER JOIN portfolioinstant AS pi
-      on a.account = pi.account
-      WHERE u.id = ${userid} AND pi.symbol = ${symbol};`
+      SELECT qty FROM portfolioinstant WHERE user_id = ${userid} AND symbol = '${symbol}';`
     return queryString
   }
 }

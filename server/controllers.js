@@ -167,6 +167,7 @@ module.exports = {
           isDone = true;
           return;
         }
+        console.log(result.rows[0].stocks)
         stockSymbols = result.rows[0].stocks;
         cryptoSymbols = result.rows[0].cryptos;
       })
@@ -564,9 +565,8 @@ module.exports = {
       })
   },
   getHoldingAmount: (req, res) => {
-    console.log(req.query)
     var userid = req.query.userid
-    var symbol = req.query.symbol
+    var symbol = req.query.symbol.toUpperCase()
     pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
       .then((result) => {
         console.log(result.rows)
