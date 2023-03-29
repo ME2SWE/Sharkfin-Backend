@@ -33,7 +33,14 @@ module.exports = {
     if (!user_id) {
       res.status(400);
     }
+    user_id = parseInt(user_id);
+    if (user_id === 0) {
+      res.send({});
+      return;
+    }
     var symbols = [];
+    var stockSymbols = [];
+    var cryptoSymbols = [];
     const symbolQuery =  `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfoliomins
@@ -44,8 +51,10 @@ module.exports = {
         FROM portfoliomins
         WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
+    console.log(symbolQuery);
     await pool.query(symbolQuery)
     .then((result) => {
+      console.log(result);
       if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
         res.send({});
         isDone = true;
@@ -60,6 +69,7 @@ module.exports = {
     if (isDone) {
       return;
     };
+    console.log(stockSymbols, cryptoSymbols);
     var timeObj = portfolioHelper.handleTimeFrame(timeWindow);
     var historyData = {};
     if (stockSymbols.length !== 0) {
@@ -113,6 +123,7 @@ module.exports = {
     var portfolioHistory;
     await pool.query(getQueries.getPortfolioHistory(user_id, timeObj.sqlTF, timeWindow, todayDate))
       .then((result) => {
+        console.log(result);
         portfolioHistory = result.rows;
       })
       .catch((err) => {
@@ -127,11 +138,12 @@ module.exports = {
   },
 
   getAllocationAndPosition : async (req, res) => {
-    // var user_id = req.query.user_id;
-    var user_id = 3;
+    var user_id = req.query.user_id;
     var isDone = false;
     const today = moment().day();
     const todayDate = moment().format().slice(0,10);
+    var stockSymbols = [];
+    var cryptoSymbols = [];
     if (today === 6) {
       var startDate = moment().subtract(1,'days');
     } else if (today === 0) {
@@ -146,6 +158,11 @@ module.exports = {
     }
     if (!user_id) {
       res.status(400);
+    }
+    user_id = parseInt(user_id);
+    if (user_id === 0) {
+      res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
+      return;
     }
     var startDataCrypto = moment.utc().subtract(21,'minutes').format();
     var endDate = moment.utc().subtract(15,'minutes').format();
@@ -170,15 +187,16 @@ module.exports = {
           } else {
             res.send({totalNetWorth: result.rows[0].avail_balance, position: [], allocation : {symbols: ['CASH'], ratios: [100]}});
           }
+          isDone = true;
+          return;
         })
         .catch((err) => {
           console.log(err);
         })
-        isDone = true;
-        return;
+      } else {
+        stockSymbols = result.rows[0].stocks;
+        cryptoSymbols = result.rows[0].cryptos;
       }
-      stockSymbols = result.rows[0].stocks;
-      cryptoSymbols = result.rows[0].cryptos;
     })
     .catch((err) => {
       console.log(err);

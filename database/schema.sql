@@ -73,7 +73,8 @@ CREATE TABLE IF NOT EXISTS finances (
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
 insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',0,1000,1000);
 insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',1000,2000,2000);
-insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (3,'bank',0,500,500);
+insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (2,'bank',0,500,500);
+insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (2,'bank',500,1000,1500);
 
 CREATE TABLE IF NOT EXISTS performance (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -100,8 +101,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
   avg_cost DOUBLE PRECISION
 );
 
--- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
--- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS portfoliomins (
   user_id INTEGER REFERENCES users(id),
