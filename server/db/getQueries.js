@@ -51,11 +51,13 @@ const getQueries = {
   },
 
   getAlloPosQuery: (user_id) => {
-    var query = `SELECT
-    p.user_id, p.symbol, p.qty, p.avg_cost, f.avail_balance AS buy_pwr
-    FROM portfolioinstant p
-    LEFT JOIN finances f ON f.user_id = p.user_id
-    WHERE p.user_id = ${user_id} AND f.id = (select max(id) from finances);`;
+    var query = `WITH recentfinance AS (
+      SELECT DISTINCT ON (user_id) f.* FROM finances f ORDER BY user_id, datetime desc
+      )
+      SELECT p.user_id, p.type, p.symbol, p.qty, p.avg_cost, f.avail_balance AS buy_pwr
+      FROM portfolioinstant p
+      LEFT JOIN recentfinance f ON f.user_id = p.user_id
+      WHERE p.user_id = ${user_id};`;
     return query;
   },
 

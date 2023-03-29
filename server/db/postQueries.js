@@ -1,7 +1,12 @@
 const postQueries = {
   regPortfolioUpdate : function(time) {
-    var query = `INSERT INTO portfoliomins (time, account, symbol, qty, avg_cost, buy_pwr)
-    SELECT '${time}', i.account, i.symbol, i.qty, i.avg_cost, i.buy_pwr FROM portfolioinstant i;`;
+    var query = `WITH recentfinance AS (
+      SELECT DISTINCT ON (user_id) f.* FROM finances f ORDER BY user_id, datetime desc
+      )
+      INSERT INTO portfoliomins (time, user_id, symbol, type, qty, avg_cost, buy_pwr)
+      SELECT '${time}', p.user_id, p.symbol, p.type, p.qty, p.avg_cost, f.avail_balance AS buy_pwr
+      FROM portfolioinstant p
+      LEFT JOIN recentfinance f ON f.user_id = p.user_id;`;
     return query;
   },
 
