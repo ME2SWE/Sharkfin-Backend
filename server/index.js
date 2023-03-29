@@ -1,7 +1,6 @@
 require('dotenv').config();
 const express = require('express');
 const path = require('path');
-const port = process.env.PORT;
 const postQueries = require('./db/postQueries.js');
 const pool = require('./db');
 const portfolioHelper = require('./helper/portfolioHelper.js');
@@ -52,6 +51,15 @@ app.post('/updateFriendStatus', controllers.updateFriendStatus);
 app.post('/addFriend', controllers.addFriend);
 app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
+//Get buying power and holding from portfolioinstant
+app.get('/getAvailBalance', controllers.getAvailBalance)
+app.get('/getHoldingAmount', controllers.getHoldingAmount)
+
+//Update buying power and holding to portfolioinstant
+//app.put('/updateAssetData', controllers.updateAssetData)
+
+// //Post order data to transaction
+// app.post('/postOrder', controllers.postOrder)
 
 setInterval(async function() {
   var date = moment.utc();

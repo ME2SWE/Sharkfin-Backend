@@ -7,23 +7,24 @@ const dbChats = require('./db/chatQueries.js');
 const dbFinances = require('./db/financeQueries.js');
 const dbAccounts = require('./db/accountQueries.js');
 const dbLeaderBoard = require('./db/leaderboardQueries.js')
+const dbStockCrypto = require('./db/stockCryptoQueries.js')
 const moment = require('moment');
 require('dotenv').config();
 
 module.exports = {
   //Portfolio routes
-  getChart : async (req, res) => {
+  getChart: async (req, res) => {
     var user_id = req.query.user_id;
     var timeWindow = req.query.timeWindow;
     var isDone = false;
     const today = moment().day();
-    const todayDate = moment().format().slice(0,10);
+    const todayDate = moment().format().slice(0, 10);
     if (today === 6) {
-      var currentDate = moment().subtract(1,'days');
+      var currentDate = moment().subtract(1, 'days');
     } else if (today === 0) {
-      var currentDate = moment().subtract(2,'days');
+      var currentDate = moment().subtract(2, 'days');
     } else {
-      var currentDate = moment().subtract(15,'minutes');
+      var currentDate = moment().subtract(15, 'minutes');
     }
     if (currentDate.hours() > 13 && currentDate.minutes() > 0) {
       var currentDateFormated = currentDate.format().slice(0, 10) + 'T19:59:59Z';
@@ -113,7 +114,7 @@ module.exports = {
         .then((result) => {
           var weekendExcluded = portfolioHelper.excludeWeekend(result.data.bars);
           console.log(weekendExcluded);
-          historyData = {...historyData, ...weekendExcluded};
+          historyData = { ...historyData, ...weekendExcluded };
         })
         .catch((err) => {
           console.log(err);
@@ -145,11 +146,11 @@ module.exports = {
     var stockSymbols = [];
     var cryptoSymbols = [];
     if (today === 6) {
-      var startDate = moment().subtract(1,'days');
+      var startDate = moment().subtract(1, 'days');
     } else if (today === 0) {
-      var startDate = moment().subtract(2,'days');
+      var startDate = moment().subtract(2, 'days');
     } else {
-      var startDate = moment().subtract(15,'minutes');
+      var startDate = moment().subtract(15, 'minutes');
     }
     if (startDate.hours() > 13 && startDate.minutes() > 0) {
       var startDateFormated = startDate.format().slice(0, 10) + 'T19:59:59Z';
@@ -167,7 +168,7 @@ module.exports = {
     var startDataCrypto = moment.utc().subtract(21,'minutes').format();
     var endDate = moment.utc().subtract(15,'minutes').format();
     var alpacaMultiBarsURL = process.env.ALPACA_STOCK_URL;
-    const symbolQuery =  `SELECT ARRAY (
+    const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfolioinstant
       WHERE user_id = ${user_id} AND type = 'stock')
@@ -247,7 +248,7 @@ module.exports = {
       };
       await axios.get(alpacaCryptoMultiBarsURL, alpacaConfigs)
         .then((result) => {
-          alpacaResults = {...alpacaResults, ...result.data.bars};
+          alpacaResults = { ...alpacaResults, ...result.data.bars };
         })
         .catch((err) => {
           console.log(err);
@@ -255,61 +256,61 @@ module.exports = {
     };
     var alloPosQuery = getQueries.getAlloPosQuery(user_id);
     await pool.query(alloPosQuery)
-    .then((result) => {
-      var incomingData = result.rows;
-      var allocationData = portfolioHelper.getAllocationRatio(incomingData);
-      var positionData = portfolioHelper.insertPosition(alpacaResults, allocationData);
-      res.status(200).send(allocationData);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((result) => {
+        var incomingData = result.rows;
+        var allocationData = portfolioHelper.getAllocationRatio(incomingData);
+        var positionData = portfolioHelper.insertPosition(alpacaResults, allocationData);
+        res.status(200).send(allocationData);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
   //Transaction Routes
   getTransactions: (req, res) => {
     pool.query(dbTransactions.dbGetTransactions(1))
-    .then((result) => {
-      res.send(result.rows);
-    })
-    .catch((err) => {
-      res.send(err);
-    })
+      .then((result) => {
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
   },
   postTransaction: (req, res) => {
     // console.log(req);
     // console.log(req.body);
     pool.query(dbTransactions.dbPostTransaction(req.body))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        console.log(result);
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   //Chat Routes
   getChatLog: (req, res) => {
     pool.query(dbChats.dbGetChatLog(1))
-    .then((result) => {
-      console.log(result);
-      res.send(result.rows);
-    })
+      .then((result) => {
+        console.log(result);
+        res.send(result.rows);
+      })
   },
   postChat: (req, res) => {
     pool.query(dbChats.dbPostChat(req.body))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
+      .then((result) => {
+        console.log(result);
+        res.end();
+      })
   },
   getChatFriends: (req, res) => {
     pool.query(dbChats.dbGetChatFriends(1))
-    .then((result) => {
-      console.log(result);
-      res.send(result.rows);
-    })
+      .then((result) => {
+        console.log(result);
+        res.send(result.rows);
+      })
   },
 
   //Finances Routes
@@ -331,10 +332,10 @@ module.exports = {
     const text = `SELECT * FROM finances WHERE user_id = $1`;
     const values = [req.query.user_id];
     pool.query(text, values)
-    .then(result => {
-      res.send(result);
-    })
-    .catch(e => console.error(e.stack))
+      .then(result => {
+        res.send(result);
+      })
+      .catch(e => console.error(e.stack))
   },
 
   //LeaderBoard routes
@@ -342,70 +343,70 @@ module.exports = {
     var id = req.query.id
     // console.log(id)
     await pool.query(dbLeaderBoard.dbGetFriendList(id))
-    .then((results) => {
-      var arr = results.rows
-      var friendIdArr = []
-      for (var x = 0; x < arr.length; x++) {
-        friendIdArr.push(arr[x].friend_id)
-      }
-      friendIdArr.push(Number(id))
-      return friendIdArr;
-    })
-    .then(async (user_arr) => {
-      const arr = JSON.stringify(user_arr)
-      const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(arr))
-      res.status(200).send(result.rows);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((results) => {
+        var arr = results.rows
+        var friendIdArr = []
+        for (var x = 0; x < arr.length; x++) {
+          friendIdArr.push(arr[x].friend_id)
+        }
+        friendIdArr.push(Number(id))
+        return friendIdArr;
+      })
+      .then(async (user_arr) => {
+        const arr = JSON.stringify(user_arr)
+        const result = await pool.query(dbLeaderBoard.dbGetFriendLeaderBoard(arr))
+        res.status(200).send(result.rows);
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   getGlobalBoard: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetGlobalLeaderBoard())
-    .then((result) => {
-      res.status(200).send(result.rows);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((result) => {
+        res.status(200).send(result.rows);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   },
 
   updatePerformance: async (req, res) => {
     await pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        console.log(result);
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   getUserDetail: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetUserDetail(req.body.id))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        console.log(result);
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   updatePicRUL: async (req, res) => {
     await pool.query(dbLeaderBoard.dbPostPicURL(req.body.id, req.body.url))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        console.log(result);
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   // Login & Accounts
@@ -415,49 +416,49 @@ module.exports = {
     const values = [req.query.email];
 
     pool.query(text, values)
-    .then(result => {
-      res.send(result);
-    })
-    .catch(e => {
-      console.error(e.stack);
-      res.send(e);
-    })
+      .then(result => {
+        res.send(result);
+      })
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   getUserInfo: (req, res) => {
     pool.query(dbAccounts.dbGetUserInfo(req.params.id))
-    .then((result) => {
-      res.send(result.rows);
-    })
-    .catch(err => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        res.send(result.rows);
+      })
+      .catch(err => {
+        console.log(err);
+        res.send(err);
+      })
   },
   updateUserDetails: (req, res) => {
     pool.query(dbAccounts.dbUpdateUserInfo(req.params.id, req.body))
-    .then((result) => {
-      res.send('updated!');
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        res.send('updated!');
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
   updateBankInfo: (req, res) => {
     pool.query(dbAccounts.dbUpdateBankInfo(req.params.id, req.body))
-    .then((result) => {
-      res.send('updated!');
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        res.send('updated!');
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   // login
   addUser: (req, res) => {
-   console.log('======addUser req.data', req);
+    console.log('======addUser req.data', req);
     const text = `
       INSERT INTO users (username, firstname, lastname, email, profilepic_url)
       VALUES ($1, $2, $3, $4, $5)
@@ -466,14 +467,14 @@ module.exports = {
     const values = [req.body.data.username, req.body.data.firstname, req.body.data.lastname, req.body.data.email, req.body.data.picture];
 
     pool.query(text, values)
-    .then(result => {
-      console.log('addUser succeeds')
-      res.send(result);
-    })
-    .catch(e => {
-      console.error(e.stack);
-      res.send(e);
-    })
+      .then(result => {
+        console.log('addUser succeeds')
+        res.send(result);
+      })
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   updateUserInfo: (req, res) => {
@@ -524,13 +525,13 @@ module.exports = {
     const values = [req.query.user_id];
 
     pool.query(text, values)
-    .then(result => {
-      res.send(result);
-    })
-    .catch(e => {
-      console.error(e.stack);
-      res.send(e);
-    })
+      .then(result => {
+        res.send(result);
+      })
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   // friendslist
@@ -543,19 +544,19 @@ module.exports = {
     const values = [req.body.data.id];
 
     pool.query(text, values)
-    .then(result => {
-      res.send(result);
-    })
-    .catch(e => {
-      console.error(e.stack);
-      res.send(e);
-    })
+      .then(result => {
+        res.send(result);
+      })
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   // friendslist
   addFriend: (req, res) => {
-      console.log('======addFriend req.data', req);
-      const text = `
+    console.log('======addFriend req.data', req);
+    const text = `
       INSERT INTO friendlist (user_id, friend_id, status)
       VALUES ($1, $2, $3)
       RETURNING *
@@ -563,13 +564,13 @@ module.exports = {
     const values = [req.body.data.user_id, req.body.data.friend_id, 'pending'];
 
     pool.query(text, values)
-    .then(result => {
-      res.send(result);
-    })
-    .catch(e => {
-      console.error(e.stack);
-      res.send(e);
-    })
+      .then(result => {
+        res.send(result);
+      })
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
   },
 
   // friendslist
@@ -590,13 +591,39 @@ module.exports = {
     const values = [req.query.id];
 
     pool.query(text, values)
-    .then(result => {
-      res.send(result);
-    })
-    .catch(e => {
-      console.error(e.stack);
-      res.send(e);
-    })
+      .then(result => {
+        res.send(result);
+      })
+      .catch(e => {
+        console.error(e.stack);
+        res.send(e);
+      })
+  },
+
+  getAvailBalance: (req, res) => {
+    // console.log(req.query.userid)
+    var userid = req.query.userid
+    pool.query(dbStockCrypto.getAvailBalance(userid))
+      .then((result) => {
+        //console.log(result.rows)
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
+  },
+  getHoldingAmount: (req, res) => {
+    console.log(req.query)
+    var userid = req.query.userid
+    var symbol = req.query.symbol
+    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
+      .then((result) => {
+        console.log(result.rows)
+        res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
+      })
   }
 
 }
