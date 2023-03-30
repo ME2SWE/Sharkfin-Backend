@@ -4,8 +4,8 @@ const dbTransactions = {
     return query;
   },
   dbPostTransaction: (data) => {
-    var query = `INSERT INTO transactions (user_id, type, stock_ticker, quantity, price, status)
-      VALUES (${data.account}, '${data.orderType}', '${data.symbol}', ${data.amount}, '${data.price}', 'complete');`;
+    var query = `INSERT INTO transactions (user_id, type, datetime, stock_ticker, quantity, price, status)
+      VALUES (${data.account}, '${data.orderType}', '${data.datetime}','${data.symbol}', ${data.amount}, '${data.price}', 'complete');`;
     return query;
   }
 }

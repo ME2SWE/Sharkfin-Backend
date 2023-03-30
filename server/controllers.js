@@ -42,7 +42,7 @@ module.exports = {
     var symbols = [];
     var stockSymbols = [];
     var cryptoSymbols = [];
-    const symbolQuery =  `SELECT ARRAY (
+    const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
       FROM portfoliomins
       WHERE user_id = ${user_id} AND type = 'stock')
@@ -54,19 +54,19 @@ module.exports = {
          AS cryptos;`;
     console.log(symbolQuery);
     await pool.query(symbolQuery)
-    .then((result) => {
-      console.log(result);
-      if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
-        res.send({});
-        isDone = true;
-        return;
-      }
-      stockSymbols = result.rows[0].stocks;
-      cryptoSymbols = result.rows[0].cryptos;
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((result) => {
+        console.log(result);
+        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
+          res.send({});
+          isDone = true;
+          return;
+        }
+        stockSymbols = result.rows[0].stocks;
+        cryptoSymbols = result.rows[0].cryptos;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     if (isDone) {
       return;
     };
@@ -138,11 +138,11 @@ module.exports = {
     res.send(result);
   },
 
-  getAllocationAndPosition : async (req, res) => {
+  getAllocationAndPosition: async (req, res) => {
     var user_id = req.query.user_id;
     var isDone = false;
     const today = moment().day();
-    const todayDate = moment().format().slice(0,10);
+    const todayDate = moment().format().slice(0, 10);
     var stockSymbols = [];
     var cryptoSymbols = [];
     if (today === 6) {
@@ -162,11 +162,11 @@ module.exports = {
     }
     user_id = parseInt(user_id);
     if (user_id === 0) {
-      res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
+      res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
       return;
     }
-    var startDataCrypto = moment.utc().subtract(21,'minutes').format();
-    var endDate = moment.utc().subtract(15,'minutes').format();
+    var startDataCrypto = moment.utc().subtract(21, 'minutes').format();
+    var endDate = moment.utc().subtract(15, 'minutes').format();
     var alpacaMultiBarsURL = process.env.ALPACA_STOCK_URL;
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
@@ -179,29 +179,29 @@ module.exports = {
         WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
-    .then((result) => {
-      if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
-        pool.query(getQueries.getAvailBalance(user_id))
-        .then((result) => {
-          if (result.rows.length === 0) {
-            res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
-          } else {
-            res.send({totalNetWorth: result.rows[0].avail_balance, position: [], allocation : {symbols: ['CASH'], ratios: [100]}});
-          }
-          isDone = true;
-          return;
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-      } else {
-        stockSymbols = result.rows[0].stocks;
-        cryptoSymbols = result.rows[0].cryptos;
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((result) => {
+        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
+          pool.query(getQueries.getAvailBalance(user_id))
+            .then((result) => {
+              if (result.rows.length === 0) {
+                res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
+              } else {
+                res.send({ totalNetWorth: result.rows[0].avail_balance, position: [], allocation: { symbols: ['CASH'], ratios: [100] } });
+              }
+              isDone = true;
+              return;
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+        } else {
+          stockSymbols = result.rows[0].stocks;
+          cryptoSymbols = result.rows[0].cryptos;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     if (isDone) {
       return;
     };
@@ -317,32 +317,32 @@ module.exports = {
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
     pool.query(dbFinances.dbPostFinance(req.body))
-    .then((result) => {
-      console.log(result);
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        console.log(result);
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   getFinances: (req, res) => {
     pool.query(dbFinances.dbGetFinances(req.params.id))
-    .then(result => {
-      res.send(result.rows);
-    })
-    .catch(e => console.error(e.stack))
+      .then(result => {
+        res.send(result.rows);
+      })
+      .catch(e => console.error(e.stack))
   },
 
   getBalance: (req, res) => {
     pool.query(dbFinances.dbGetBalance(req.params.id))
-    .then(result => {
-      res.send(result.rows);
-    })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(result => {
+        res.send(result.rows);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   },
 
   //LeaderBoard routes
@@ -394,15 +394,15 @@ module.exports = {
 
   getUserDetail: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetUserDetail(req.query.id))
-    .then((result) => {
-      console.log(result);
-      res.status(200).send(result.rows[0])
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        console.log(result);
+        res.status(200).send(result.rows[0])
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   updatePicRUL: async (req, res) => {
@@ -608,10 +608,23 @@ module.exports = {
       })
   },
 
-  getAvailBalance: (req, res) => {
-    // console.log(req.query.userid)
+  // getAvailBalance: (req, res) => {
+  //   // console.log(req.query.userid)
+  //   var userid = req.query.userid
+  //   pool.query(dbStockCrypto.getAvailBalance(userid))
+  //     .then((result) => {
+  //       //console.log(result.rows)
+  //       res.send(result.rows);
+  //     })
+  //     .catch((err) => {
+  //       res.send(err);
+  //     })
+  // },
+  getHoldingAmount: (req, res) => {
+    //console.log(req.query)
     var userid = req.query.userid
-    pool.query(dbStockCrypto.getAvailBalance(userid))
+    var symbol = req.query.symbol
+    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
       .then((result) => {
         //console.log(result.rows)
         res.send(result.rows);
@@ -620,18 +633,16 @@ module.exports = {
         res.send(err);
       })
   },
-  getHoldingAmount: (req, res) => {
+  updatePortfolioinstant: (req, res) => {
     console.log(req.query)
-    var userid = req.query.userid
-    var symbol = req.query.symbol
-    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
-      .then((result) => {
-        console.log(result.rows)
-        res.send(result.rows);
-      })
-      .catch((err) => {
-        res.send(err);
-      })
+    // pool.query(dbStockCrypto.(userid, symbol))
+    //   .then((result) => {
+    //     //console.log(result.rows)
+    //     res.send(result.rows);
+    //   })
+    //   .catch((err) => {
+    //     res.send(err);
+    //   })
   }
 
 }
