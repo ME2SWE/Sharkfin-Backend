@@ -50,7 +50,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   type trade_type,
   datetime TEXT NOT NULL,
   stock_ticker TEXT NOT NULL,
-  quantity integer NOT NULL,
+  quantity NUMBER NOT NULL,
   price TEXT NOT NULL,
   status status_type
 );
