@@ -13,9 +13,14 @@ const dbChats = {
     FROM friendlist
     JOIN users ON friendlist.friend_id = users.id
     WHERE friendlist.user_id = ${user_id}
+    AND friendlist.status = 'complete'
+UNION
+SELECT friendlist.user_id as friend_id, users.username, users.firstname, users.lastname, users.profilepic_URL
+    FROM friendlist
+    JOIN users ON friendlist.user_id = users.id
+    WHERE friendlist.friend_id = ${user_id}
     AND friendlist.status = 'complete';`;
     return query;
   }
 }
-
 module.exports = dbChats;

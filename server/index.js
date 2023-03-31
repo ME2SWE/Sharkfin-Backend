@@ -20,9 +20,9 @@ app.get('/transactions/:id', controllers.getTransactions);
 app.post('/transactions', controllers.postTransaction);
 
 //Chat Log
-app.get('/chat', controllers.getChatLog);
+app.get('/chat/:id', controllers.getChatLog);
 app.post('/chat', controllers.postChat);
-app.get('/chat/friends', controllers.getChatFriends);
+app.get('/chat/:id/friends', controllers.getChatFriends);
 
 //Portfolio
 app.get('/pchart', controllers.getNetWorthData);
