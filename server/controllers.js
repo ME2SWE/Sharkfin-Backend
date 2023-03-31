@@ -184,24 +184,30 @@ module.exports = {
 
   //Chat Routes
   getChatLog: (req, res) => {
-    pool.query(dbChats.dbGetChatLog(1))
+    pool.query(dbChats.dbGetChatLog(req.params.id))
       .then((result) => {
-        console.log(result);
         res.send(result.rows);
+      })
+      .catch((err) => {
+        res.send(err);
       })
   },
   postChat: (req, res) => {
     pool.query(dbChats.dbPostChat(req.body))
       .then((result) => {
-        console.log(result);
         res.end();
+      })
+      .catch(err => {
+        res.send(err);
       })
   },
   getChatFriends: (req, res) => {
-    pool.query(dbChats.dbGetChatFriends(1))
+    pool.query(dbChats.dbGetChatFriends(req.params.id))
       .then((result) => {
-        console.log(result);
         res.send(result.rows);
+      })
+      .catch(err => {
+        res.send(err);
       })
   },
 
@@ -210,7 +216,6 @@ module.exports = {
     //TO-DO: call dbFinances.dbPostFinances
     pool.query(dbFinances.dbPostFinance(req.body))
     .then((result) => {
-      console.log(result);
       res.end();
     })
     .catch((err) => {
