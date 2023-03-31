@@ -50,10 +50,11 @@ CREATE TABLE IF NOT EXISTS transactions (
   type trade_type,
   datetime TEXT NOT NULL,
   stock_ticker TEXT NOT NULL,
-  quantity integer NOT NULL,
+  quantity NUMBER NOT NULL,
   price TEXT NOT NULL,
   status status_type
 );
+
 COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/transactionsMock.csv' DELIMITER '*' CSV HEADER;
 
 
@@ -159,3 +160,4 @@ CREATE INDEX idx_chats_sent_to ON chats(sent_to);
 
 
 SELECT setval('users_id_seq', COALESCE((SELECT MAX(id)+1 FROM users), 1), false);
+SELECT setval('users_id_seq', COALESCE((SELECT MAX(id)+1 FROM transactions), 1), false);

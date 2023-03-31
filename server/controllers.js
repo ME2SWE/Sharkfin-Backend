@@ -8,6 +8,7 @@ const dbFinances = require('./db/financeQueries.js');
 const dbAccounts = require('./db/accountQueries.js');
 const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const dbStockCrypto = require('./db/stockCryptoQueries.js')
+const orderHelper = require('./helper/orderHelper.js')
 const moment = require('moment');
 require('dotenv').config();
 
@@ -281,7 +282,7 @@ module.exports = {
     // console.log(req.body);
     pool.query(dbTransactions.dbPostTransaction(req.body))
       .then((result) => {
-        console.log(result);
+        console.log('transaction ', result);
         res.end();
       })
       .catch((err) => {
@@ -633,16 +634,35 @@ module.exports = {
         res.send(err);
       })
   },
-  updatePortfolioinstant: (req, res) => {
-    console.log(req.query)
-    // pool.query(dbStockCrypto.(userid, symbol))
-    //   .then((result) => {
-    //     //console.log(result.rows)
-    //     res.send(result.rows);
-    //   })
-    //   .catch((err) => {
-    //     res.send(err);
-    //   })
+  updatePortfolioinstant: async (req, res) => {
+    let preppedOrderObj = await orderHelper.dataType(req.body)
+    console.log(preppedOrderObj)
+    await pool.query(dbStockCrypto.updatePortfolioinstant(preppedOrderObj))
+      .then((result) => {
+        if (result.rowCount === 1) {
+          console.log('updated');
+        }
+      })
+      .then(async () => {
+        // update available balance
+
+        let newFinanceObj = {}
+        newFinanceObj.transaction_type = 'trade'
+        newFinanceObj.user_id = preppedOrderObj.account
+        newFinanceObj.amount = preppedOrderObj.equity.buyingPower
+        await pool.query(dbFinances.dbPostFinance(newFinanceObj))
+          .then((result) => {
+            if (result.rowCount === 1) {
+              console.log('inserted');
+            }
+            res.end();
+          })
+      })
+      .catch((err) => {
+        console.log(err)
+        res.send(err);
+      })
   }
 
 }
+
