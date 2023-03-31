@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 -- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('mockData', 'H', 'Y', 'howardhyoon@gmail.com', 'www.photoURL.com');
 -- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser1', 'H1', 'Y1', 'testing@gmail.com', 'www.photoURL.com');
--- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('newUser', 'H2', 'Y2', 'hyoon8185@gmail.com', 'www.photoURL.com');
+INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('newUser', 'H2', 'Y2', 'hyoon8185@gmail.com', 'www.photoURL.com');
 
 CREATE TABLE IF NOT EXISTS friendlist (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS friendlist (
   status status_type
 );
 
-COPY friendlist (user_id,friend_id,status) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/friendlistMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY friendlist (user_id,friend_id,status) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO friendlist (user_id, friend_id, status) VALUES (1, 2, 'pending');
 
@@ -103,11 +103,11 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 
 CREATE TABLE IF NOT EXISTS networth (
   user_id INTEGER REFERENCES users(id),
-  time TIMESTAMPTZ,
-  net DOUBLE PRECISION
+  time TIMESTAMPTZ NOT NULL,
+  net DOUBLE PRECISION NOT NULL
 );
 
-SELECT create_hypertable ('networth', 'time', migrate_data => TRUE);
+SELECT create_hypertable ('"networth"', 'time');
 
 -- COPY networth (user_id, time, net)
 -- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
