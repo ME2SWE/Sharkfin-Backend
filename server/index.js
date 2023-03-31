@@ -7,6 +7,7 @@ const portfolioHelper = require('./helper/portfolioHelper.js');
 const moment = require('moment');
 const controllers = require('./controllers.js');
 const cors = require('cors');
+const updateNetWorth = require('./helper/updateNetWorth.js');
 
 
 const app = express();
@@ -24,7 +25,7 @@ app.post('/chat', controllers.postChat);
 app.get('/chat/:id/friends', controllers.getChatFriends);
 
 //Portfolio
-app.get('/pchart', controllers.getChart);
+app.get('/pchart', controllers.getNetWorthData);
 app.get('/pallocation', controllers.getAllocationAndPosition);
 
 //Finances
@@ -64,9 +65,9 @@ app.get('/getHoldingAmount', controllers.getHoldingAmount)
 // app.post('/postOrder', controllers.postOrder)
 
 setInterval(async function() {
-  var date = moment.utc();
+  var date = moment();
   var mins = date.minutes();
-  console.log(date.format().slice(0, 19).replace('T', ' '));
+  var timestamp = date.format().slice(0, 19).replace('T', ' ');
   var hashMin = {
     '00' : 1,
     '10' : 1,
@@ -75,19 +76,24 @@ setInterval(async function() {
     '40' : 1,
     '50' : 1,
   };
-  if (mins in hashMin) {
-    console.log('updating...');
-    await pool.query(postQueries.regPortfolioUpdate(date.format().slice(0, 19).replace('T', ' ')))
+
+  // if (mins in hashMin) {
+    await pool.query('WITH user_ids AS (SELECT DISTINCT id FROM users) SELECT array_agg(u.id) AS user_ids FROM user_ids u;')
     .then((result) => {
-      console.log('10 Mins Update Complete');
+      var userIDs = result.rows[0].user_ids;
+      for (var i = 0; i < userIDs.length; i++) {
+        var user_id = userIDs[i];
+        updateNetWorth.updateNetWorth(user_id);
+      }
+      console.log('Net Worth 10 Minutes Updated');
     })
     .catch((err) => {
       console.log(err);
     })
-  } else {
-    console.log('waiting for trigger...');
-  }
-}, 60000);
+  // } else {
+  //   console.log('waiting for trigger...');
+  // }
+}, 10000); //updating networth every 10 seconds
 
 app.listen(8080);
 console.log('Listening at http://localhost:8080');
