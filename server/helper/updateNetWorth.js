@@ -67,8 +67,10 @@ module.exports = {
       console.log(err);
     });
     if (isDone) {
+      // console.log('No Stock or Crypto');
       return;
     }
+    // console.log('I am not supposed to be here!!!!');
     var alpacaResults;
     var incomingData;
     var allocationData;
