@@ -1,5 +1,16 @@
 module.exports = {
   dataType: async (orderObj) => {
+    let amount = Number.parseFloat(orderObj.amount)
+    if (!Number.isInteger(amount)) {
+      let floatAmount = parseFloat(orderObj.amount)
+      orderObj.amount = floatAmount
+
+    } else {
+
+      let wholeAmount = parseInt(orderObj.amount)
+      orderObj.amount = wholeAmount
+    }
+
 
     for (let key in orderObj.equity) {
       // find whole or float
@@ -34,21 +45,29 @@ module.exports = {
   },
   calculateAvgCost: (orderObj, currentAvgCost) => {
     console.log(orderObj, currentAvgCost)
+    var totalCost = (orderObj.amount * orderObj.price) + (currentAvgCost.qty * currentAvgCost.avg_cost)
+    console.log('totalcost', totalCost, 'cal ', `(${orderObj.amount} * ${orderObj.price}) + (${currentAvgCost.qty} * ${currentAvgCost.avg_cost})`)
+    var newAvgCost = totalCost / orderObj.newRemaining.holding
+    console.log('newAvgCost ', newAvgCost, 'cal ', `${totalCost} / ${orderObj.newRemaining.holding}`)
+    orderObj.avg_cost = newAvgCost
+
+    return orderObj
 
   }
 }
 
 /**
- {
+{
   orderIn: 'shares',
-  amount: '1',
+  amount: 2,
   orderType: 'buy',
   account: 5,
+  purchaseType: 'stock',
   symbol: 'MSFT',
   company: 'Microsoft Corporation',
-  price: 283.95,
-  datetime: 'Thu, 30 Mar 2023 21:45:29 GMT',
-  equity: { buyingPower: '-283.95', holding: '1.00' },
-  newRemaining: { buyPower: 716.05, holding: '1001' }
-}
+  price: 284.1,
+  datetime: 'Fri, 31 Mar 2023 18:54:35 GMT',
+  equity: { buyingPower: -568.2, holding: 2 },
+  newRemaining: { buyPower: 7432.95, holding: 2 }
+} { user_id: 5, symbol: 'MSFT', type: 'stock', qty: 1, avg_cost: 284.1 }
  */

@@ -24,7 +24,7 @@ const dbStockCrypto = {
     var symbol = orderObj.symbol
     var type = orderObj.purchaseType
     var qty = orderObj.newRemaining.holding
-    var avg_cost = orderObj.price
+    var avg_cost = orderObj.avg_cost
     var queryString = `UPDATE portfolioinstant SET qty = ${qty}, avg_cost = ${avg_cost} WHERE user_id = ${user_id} AND symbol = '${symbol}';`
     console.log(queryString)
     return queryString

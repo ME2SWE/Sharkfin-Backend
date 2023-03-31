@@ -533,7 +533,7 @@ module.exports = {
   },
   updatePortfolioinstant: async (req, res) => {
     let preppedOrderObj = await orderHelper.dataType(req.body)
-    console.log('prepped', preppedOrderObj)
+    //console.log('prepped', preppedOrderObj)
 
     await pool.query(dbStockCrypto.checkUserPortfolioInstant(preppedOrderObj.account, preppedOrderObj.symbol))
       .then(async (result) => {
@@ -547,13 +547,12 @@ module.exports = {
             })
         } else {
           let oderObjwithAvgCost = await orderHelper.calculateAvgCost(preppedOrderObj, result.rows[0])
-            .then(async (oderObjwithAvgCost) => {
-              await pool.query(dbStockCrypto.updatePortfolioinstant(preppedOrderObj))
-                .then((result) => {
-                  if (result.rowCount === 1) {
-                    console.log('updated');
-                  }
-                })
+          console.log('avgcost obj', oderObjwithAvgCost)
+          await pool.query(dbStockCrypto.updatePortfolioinstant(oderObjwithAvgCost))
+            .then((result) => {
+              if (result.rowCount === 1) {
+                console.log('updated');
+              }
             })
         }
       })
