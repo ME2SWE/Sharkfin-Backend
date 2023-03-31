@@ -101,8 +101,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 );
 COPY portfolioinstant (user_id, symbol, type, qty, avg_cost) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 -- INSERT INTO (user_id, symbol, type, qty, avg_cost) values(5, 'MSFT', 'stock', 100, 1);
--- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
--- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS networth (
   user_id INTEGER REFERENCES users(id),
