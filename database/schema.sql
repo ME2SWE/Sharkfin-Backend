@@ -2,7 +2,7 @@
 -- 1) Install PostgreSQL onto your computer as well as psql command line tool
 -- 2) Run 'createdb sharkfin' in the terminal
 -- 3) Run 'psql sharkfin' to enter into postgres CLI tool
--- 4) Run '\i ./database/schema.sql'
+-- 4) Run \i ./database/schema.sql
 
 -- to check if your tables are created properly you can run '\dt' to view all the tables
 
@@ -27,11 +27,10 @@ CREATE TABLE IF NOT EXISTS users (
   account_number numeric
 );
 
-COPY users (id,username,firstname,lastname,email,profilepic_URL) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
-
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
--- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'H', 'Y', 'howardhyoon@gmail.com', 'www.photoURL.com');
+-- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('mockData', 'H', 'Y', 'howardhyoon@gmail.com', 'www.photoURL.com');
 -- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser1', 'H1', 'Y1', 'testing@gmail.com', 'www.photoURL.com');
+-- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('newUser', 'H2', 'Y2', 'hyoon8185@gmail.com', 'www.photoURL.com');
 
 CREATE TABLE IF NOT EXISTS friendlist (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -54,8 +53,7 @@ CREATE TABLE IF NOT EXISTS transactions (
   price TEXT NOT NULL,
   status status_type
 );
-COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/transactionsMock.csv' DELIMITER '*' CSV HEADER;
-
+-- COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/transactionsMock.csv' DELIMITER '*' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO transactions (user_id, type, stock_ticker, quantity, price, status) VALUES (1, 'buy', 'GOOG', 5, '52.11', 'complete');
 
@@ -68,9 +66,7 @@ CREATE TABLE IF NOT EXISTS finances (
   avail_balance DOUBLE PRECISION,
   datetime TIMESTAMP DEFAULT NOW()
 );
--- COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/financeMock.csv' DELIMITER ',' CSV HEADER;
-
-
+-- COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/financeMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
 -- insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',0,1000,1000);
@@ -83,8 +79,7 @@ CREATE TABLE IF NOT EXISTS performance (
   performance_percentage numeric(4,1) NOT NULL
 );
 
-COPY performance (user_id,performance_percentage) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/performanceMock.csv' DELIMITER ',' CSV HEADER;
-
+-- COPY performance (user_id,performance_percentage) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/performanceMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS chats (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -103,47 +98,19 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 );
 
 -- INSERT INTO (user_id, symbol, type, qty, avg_cost) values(5, 'MSFT', 'stock', 100, 1);
-COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
-FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+-- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
-CREATE TABLE IF NOT EXISTS portfoliomins (
+CREATE TABLE IF NOT EXISTS networth (
   user_id INTEGER REFERENCES users(id),
-  symbol TEXT,
-  type TEXT,
   time TIMESTAMPTZ,
-  qty FLOAT,
-  avg_cost DOUBLE PRECISION,
-  buy_pwr DOUBLE PRECISION
+  net DOUBLE PRECISION
 );
 
-COPY portfoliomins (user_id, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/minutesMock.csv' DELIMITER ',' CSV HEADER;
+SELECT create_hypertable ('networth', 'time', migrate_data => TRUE);
 
-CREATE TABLE IF NOT EXISTS portfoliodays (
-  user_id INTEGER REFERENCES users(id),
-  symbol TEXT,
-  type TEXT,
-  time DATE,
-  qty FLOAT,
-  avg_cost DOUBLE PRECISION,
-  buy_pwr DOUBLE PRECISION
-);
-
-COPY portfoliodays (user_id, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/daysmock.csv' DELIMITER ',' CSV HEADER;
-
-CREATE TABLE IF NOT EXISTS portfolioweeks (
-  user_id INTEGER REFERENCES users(id),
-  symbol TEXT,
-  type TEXT,
-  time DATE,
-  qty FLOAT,
-  avg_cost DOUBLE PRECISION,
-  buy_pwr DOUBLE PRECISION
-);
-
-COPY portfolioweeks (user_id, symbol, type, time, qty, avg_cost, buy_pwr)
-FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/weeksMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY networth (user_id, time, net)
+-- FROM '/Users/hyoon/Workspace/rpp2207/BOC/Sharkfin-Backend/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
 CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);
@@ -151,11 +118,8 @@ CREATE INDEX idx_transactions_user_id ON transactions(user_id);
 CREATE INDEX idx_finances_user_id ON finances(user_id);
 CREATE INDEX idx_performance_user_id ON performance(user_id);
 CREATE INDEX idx_portinstant_symbol ON portfolioinstant (user_id, symbol);
-CREATE INDEX idx_portmins_symbol_time ON portfoliomins (user_id, symbol, time DESC);
-CREATE INDEX idx_portdays_symbol_time ON portfoliodays (user_id, symbol, time DESC);
-CREATE INDEX idx_portweeks_symbol_time ON portfolioweeks (user_id, symbol, time DESC);
+CREATE INDEX idx_networth_time ON networth (user_id, time DESC);
 CREATE INDEX idx_chats_sent_from ON chats(sent_from);
 CREATE INDEX idx_chats_sent_to ON chats(sent_to);
-
 
 SELECT setval('users_id_seq', COALESCE((SELECT MAX(id)+1 FROM users), 1), false);
