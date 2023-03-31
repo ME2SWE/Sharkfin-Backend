@@ -29,8 +29,7 @@ module.exports = {
       }
 
     }
-    let newOrderObj = await calculateAvgCost(newOrderObj)
-    return newOrderObj
+    return orderObj
 
   },
   calculateAvgCost: (orderObj, currentAvgCost) => {
