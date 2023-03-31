@@ -6,7 +6,7 @@ const moment = require('moment');
 generateTransactionMockData = () => {
   const data = [];
   // Loop through each time interval between start and end date
-  for (var x = 0; x < 100 ; x++) {
+  for (var x = 0; x < 200 ; x++) {
     var user = Math.floor(Math.random() * (100 - 0) + 0);
     var tradeTypeArr = ["buy", "sell"];
     var tradeIndex = Math.floor(Math.random() * 2);
@@ -16,7 +16,7 @@ generateTransactionMockData = () => {
     var quantity = Math.floor(Math.random() * (500 - 0) + 0);
     var date = new Date();
       data.push({
-        id: x+101,
+        id: x+1,
         user_id: user,
         type: tradeTypeArr[tradeIndex],
         datetime: date.toUTCString(),
