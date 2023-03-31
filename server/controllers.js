@@ -174,7 +174,7 @@ module.exports = {
     // console.log(req.body);
     pool.query(dbTransactions.dbPostTransaction(req.body))
       .then((result) => {
-        console.log('transaction ', result);
+        //console.log('transaction ', result);
         res.end();
       })
       .catch((err) => {
@@ -528,11 +528,25 @@ module.exports = {
   },
   updatePortfolioinstant: async (req, res) => {
     let preppedOrderObj = await orderHelper.dataType(req.body)
-    console.log(preppedOrderObj)
-    await pool.query(dbStockCrypto.updatePortfolioinstant(preppedOrderObj))
-      .then((result) => {
-        if (result.rowCount === 1) {
-          console.log('updated');
+    console.log('prepped', preppedOrderObj)
+
+    await pool.query(dbStockCrypto.checkUserPortfolioInstant(preppedOrderObj.account, preppedOrderObj.symbol))
+      .then(async (result) => {
+        // console.log('ghg', result)
+        if (result.rowCount === 0) {
+          await pool.query(dbStockCrypto.insertPortfolioinstant(preppedOrderObj))
+            .then((result) => {
+              if (result.rowCount === 1) {
+                console.log('inserted');
+              }
+            })
+        } else {
+          await pool.query(dbStockCrypto.updatePortfolioinstant(preppedOrderObj))
+            .then((result) => {
+              if (result.rowCount === 1) {
+                console.log('updated');
+              }
+            })
         }
       })
       .then(async () => {
@@ -550,8 +564,30 @@ module.exports = {
             res.end();
           })
       })
+
+      // await pool.query(dbStockCrypto.updatePortfolioinstant(preppedOrderObj))
+      //   .then((result) => {
+      //     if (result.rowCount === 1) {
+      //       console.log('updated');
+      //     }
+      //   })
+      //   .then(async () => {
+      //     // update available balance
+
+      //     let newFinanceObj = {}
+      //     newFinanceObj.transaction_type = 'trade'
+      //     newFinanceObj.user_id = preppedOrderObj.account
+      //     newFinanceObj.amount = preppedOrderObj.equity.buyingPower
+      //     await pool.query(dbFinances.dbPostFinance(newFinanceObj))
+      //       .then((result) => {
+      //         if (result.rowCount === 1) {
+      //           console.log('inserted');
+      //         }
+      //         res.end();
+      //       })
+      //   })
       .catch((err) => {
-        console.log(err)
+        console.log('?', err)
         res.send(err);
       })
   }

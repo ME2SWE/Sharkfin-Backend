@@ -60,8 +60,6 @@ app.get('/getHoldingAmount', controllers.getHoldingAmount)
 //Update buying power and holding to portfolioinstant
 app.put('/updatePortfolioinstant', controllers.updatePortfolioinstant)
 
-// //Post order data to transaction
-// app.post('/postOrder', controllers.postOrder)
 
 setInterval(async function () {
   var date = moment();

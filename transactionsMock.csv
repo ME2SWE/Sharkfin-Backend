@@ -1,5 +1,5 @@
 id*user_id*type*datetime*stock_ticker*quantity*price*status
-101*50*sell*Mon, 27 Mar 2023 03:03:03 GMT*TSLA*194*465.13*complete
+101*50*sell*Mon, 27 Mar 2023 03:03:03 GMT*TSLA*194.5*465.13*complete
 102*53*buy*Mon, 27 Mar 2023 03:03:03 GMT*AAPL*142*236.32*complete
 103*72*sell*Mon, 27 Mar 2023 03:03:03 GMT*NVO*481*217.44*complete
 104*4*buy*Mon, 27 Mar 2023 03:03:03 GMT*META*394*197.62*complete

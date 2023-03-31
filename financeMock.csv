@@ -1,2 +1,2 @@
 user_id,transaction_type,amount,net_deposits,avail_balance,datetime
-5,bank,1000,1000,1000,2023-03-25 19:39:03
+5,bank,1000,1000,10000,2023-03-25 19:39:03
