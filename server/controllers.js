@@ -13,130 +13,22 @@ const moment = require('moment');
 require('dotenv').config();
 
 module.exports = {
-  //Portfolio routes
-  getChart: async (req, res) => {
+  getNetWorthData: async (req, res) => {
     var user_id = req.query.user_id;
     var timeWindow = req.query.timeWindow;
-    var isDone = false;
-    const today = moment().day();
-    const todayDate = moment().format().slice(0, 10);
-    if (today === 6) {
-      var currentDate = moment().subtract(1, 'days');
-    } else if (today === 0) {
-      var currentDate = moment().subtract(2, 'days');
-    } else {
-      var currentDate = moment().subtract(15, 'minutes');
-    }
-    if (currentDate.hours() > 13 && currentDate.minutes() > 0) {
-      var currentDateFormated = currentDate.format().slice(0, 10) + 'T19:59:59Z';
-    } else {
-      var currentDateFormated = currentDate.format();
-    }
+    const today = moment();
+    const todayDate = today.format().slice(0, 10);
     if (!user_id) {
       res.status(400);
     }
-    user_id = parseInt(user_id);
-    if (user_id === 0) {
-      res.send({});
-      return;
-    }
-    var symbols = [];
-    var stockSymbols = [];
-    var cryptoSymbols = [];
-    const symbolQuery = `SELECT ARRAY (
-      SELECT DISTINCT symbol
-      FROM portfoliomins
-      WHERE user_id = ${user_id} AND type = 'stock')
-      AS stocks,
-      ARRAY (
-        SELECT DISTINCT symbol
-        FROM portfoliomins
-        WHERE user_id = ${user_id} AND type = 'crypto')
-         AS cryptos;`;
-    console.log(symbolQuery);
-    await pool.query(symbolQuery)
+    await pool.query(getQueries.getNetWorth(user_id, timeWindow, todayDate))
       .then((result) => {
-        console.log(result);
-        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) {
-          res.send({});
-          isDone = true;
-          return;
-        }
-        stockSymbols = result.rows[0].stocks;
-        cryptoSymbols = result.rows[0].cryptos;
+        netWorth = result.rows[0];
+        res.send(netWorth);
       })
       .catch((err) => {
         console.log(err);
       });
-    if (isDone) {
-      return;
-    };
-    console.log(stockSymbols, cryptoSymbols);
-    var timeObj = portfolioHelper.handleTimeFrame(timeWindow);
-    var historyData = {};
-    if (stockSymbols.length !== 0) {
-      //Get Stock History from Alpaca
-      var alpacaStockMultiBarsURL = process.env.ALPACA_STOCK_URL;
-      var alpacaConfigs = {
-        headers: {
-          "Apca-Api-Key-Id": process.env.ALPACA_KEY,
-          "Apca-Api-Secret-Key": process.env.ALPACA_SECRET
-        },
-        params: {
-          'symbols': stockSymbols.toString(),
-          'timeframe': timeObj.timeFrame, //10Mins, 1Day, 1Week
-          'start': timeObj.startTime, //UTC Market Opening Hour (UTC)
-          'end': `${currentDateFormated}` //UTC Market Closing Hour, 15 minutes gap
-        }
-      };
-      await axios.get(alpacaStockMultiBarsURL, alpacaConfigs)
-        .then((result) => {
-          historyData = result.data.bars;
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-    };
-    if (cryptoSymbols.length !== 0) {
-      var alpacaCryptoMultiBarsURL = process.env.ALPACA_CRYPTO_URL;
-      var alpacaConfigs = {
-        headers: {
-          "Apca-Api-Key-Id": process.env.ALPACA_KEY,
-          "Apca-Api-Secret-Key": process.env.ALPACA_SECRET
-        },
-        params: {
-          'symbols': cryptoSymbols.toString(),
-          'timeframe': timeObj.timeFrame, //10Mins, 1Day, 1Week
-          'start': timeObj.startTime, //UTC Market Opening Hour (UTC)
-          'end': `${currentDateFormated}` //UTC Market Closing Hour, 15 minutes gap
-        }
-      };
-      await axios.get(alpacaCryptoMultiBarsURL, alpacaConfigs)
-        .then((result) => {
-          var weekendExcluded = portfolioHelper.excludeWeekend(result.data.bars);
-          console.log(weekendExcluded);
-          historyData = { ...historyData, ...weekendExcluded };
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-    };
-    var cleanAlpacaData = portfolioHelper.cleanAlpacaData(timeWindow, historyData);
-    var portfolioHistory;
-    await pool.query(getQueries.getPortfolioHistory(user_id, timeObj.sqlTF, timeWindow, todayDate))
-      .then((result) => {
-        console.log(result);
-        portfolioHistory = result.rows;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    var cleanedPsqlData = portfolioHelper.cleanPsqlData(portfolioHistory);
-    var output = {};
-    output.alpaca = cleanAlpacaData;
-    output.history = cleanedPsqlData;
-    var result = portfolioHelper.getChartData(output);
-    res.send(result);
   },
 
   getAllocationAndPosition: async (req, res) => {
@@ -147,16 +39,18 @@ module.exports = {
     var stockSymbols = [];
     var cryptoSymbols = [];
     if (today === 6) {
-      var startDate = moment().subtract(1, 'days');
+      var endDate = moment().subtract(1, 'days');
     } else if (today === 0) {
-      var startDate = moment().subtract(2, 'days');
+      var endDate = moment().subtract(2, 'days');
     } else {
-      var startDate = moment().subtract(15, 'minutes');
+      var endDate = moment().subtract(15, 'minutes');
     }
-    if (startDate.hours() > 13 && startDate.minutes() > 0) {
-      var startDateFormated = startDate.format().slice(0, 10) + 'T19:59:59Z';
+    if (endDate.hours() > 13 && endDate.minutes() > 0) { //
+      var startDateFormated = endDate.format().slice(0, 10) + 'T13:30:00Z';
+      var endDateFormated = endDate.format().slice(0, 10) + 'T19:59:59Z';
     } else {
-      var startDateFormated = startDate.format();
+      var startDateFormated = endDate.subtract(5, 'minutes').utc().format();
+      var endDateFormated = endDate.utc().format();
     }
     if (!user_id) {
       res.status(400);
@@ -166,8 +60,6 @@ module.exports = {
       res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
       return;
     }
-    var startDataCrypto = moment.utc().subtract(21, 'minutes').format();
-    var endDate = moment.utc().subtract(15, 'minutes').format();
     var alpacaMultiBarsURL = process.env.ALPACA_STOCK_URL;
     const symbolQuery = `SELECT ARRAY (
       SELECT DISTINCT symbol
@@ -189,12 +81,12 @@ module.exports = {
               } else {
                 res.send({ totalNetWorth: result.rows[0].avail_balance, position: [], allocation: { symbols: ['CASH'], ratios: [100] } });
               }
-              isDone = true;
-              return;
             })
             .catch((err) => {
               console.log(err);
             })
+          isDone = true;
+          return;
         } else {
           stockSymbols = result.rows[0].stocks;
           cryptoSymbols = result.rows[0].cryptos;
@@ -222,7 +114,7 @@ module.exports = {
           'symbols': stockSymbols.toString(),
           'timeframe': '5Min', //10Mins, 1Day, 1Week
           'start': startDateFormated, //UTC Market Opening Hour (UTC)
-          'end': endDate //UTC Market Closing Hour, 15 minutes gap
+          'end': endDateFormated //UTC Market Closing Hour, 15 minutes gap
         }
       };
       await axios.get(alpacaStockMultiBarsURL, alpacaConfigs)
@@ -243,8 +135,8 @@ module.exports = {
         params: {
           'symbols': cryptoSymbols.toString(),
           'timeframe': '5Min',
-          'start': startDataCrypto, //UTC Market Opening Hour (UTC)
-          'end': endDate //UTC Market Closing Hour, 15 minutes gap
+          'start': startDateFormated, //UTC Market Opening Hour (UTC)
+          'end': endDateFormated //UTC Market Closing Hour, 15 minutes gap
         }
       };
       await axios.get(alpacaCryptoMultiBarsURL, alpacaConfigs)
