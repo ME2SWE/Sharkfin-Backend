@@ -23,141 +23,12 @@ module.exports = {
     await pool.query(getQueries.getNetWorth(user_id, timeWindow, todayDate))
       .then((result) => {
         netWorth = result.rows[0];
-        console.log(netWorth);
         res.send(netWorth);
       })
       .catch((err) => {
         console.log(err);
       });
   },
-  // getChart: async (req, res) => {
-  //   var user_id = req.query.user_id;
-  //   var timeWindow = req.query.timeWindow;
-  //   var isDone = false;
-  //   // const today = moment();
-  //   // const dayOfToday = today.day();
-  //   // const todayDate = moment().format().slice(0, 10);
-  //   const today = moment();
-  //   const dayOfToday = today.day(); //Assuming it's 03/24 Friday 10:30AM PDT
-  //   console.log(dayOfToday);
-  //   const todayDate = today.format().slice(0, 10);
-  //   if (dayOfToday === 6) {
-  //     var endDate = today.subtract(1, 'days'); //pulling Friday when weekend
-  //   } else if (dayOfToday === 0) {
-  //     var endDate = today.subtract(2, 'days'); //pulling Friday when weekend
-  //   } else {
-  //     var endDate = today.subtract(15, 'minutes');
-  //   }
-  //   if (endDate.hours() > 20 && endDate.minutes() > 0) {
-  //     var endDateFormated = endDate.format().slice(0, 10) + 'T19:59:59Z';
-  //   } else {
-  //     var endDateFormated = endDate.format();
-  //   }
-  //   if (!user_id) {
-  //     res.status(400);
-  //   }
-  //   user_id = parseInt(user_id);
-  //   if (user_id === 0) {
-  //     res.send({});
-  //     return;
-  //   }
-  //   var symbols = [];
-  //   var stockSymbols = [];
-  //   var cryptoSymbols = [];
-  //   const symbolQuery =  `SELECT ARRAY (
-  //     SELECT DISTINCT symbol
-  //     FROM portfoliomins
-  //     WHERE user_id = ${user_id} AND type = 'stock')
-  //     AS stocks,
-  //     ARRAY (
-  //       SELECT DISTINCT symbol
-  //       FROM portfoliomins
-  //       WHERE user_id = ${user_id} AND type = 'crypto')
-  //        AS cryptos;`;
-  //   await pool.query(symbolQuery)
-  //   .then((result) => {
-  //     if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //if new user
-  //       res.send({});
-  //       isDone = true;
-  //       return;
-  //     }
-  //     stockSymbols = result.rows[0].stocks;
-  //     cryptoSymbols = result.rows[0].cryptos;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  //   if (isDone) {
-  //     return;
-  //   };
-  //   var timeObj = portfolioHelper.handleTimeFrame(endDate, timeWindow);
-  //   console.log(timeObj);
-  //   var historyData = {};
-  //   if (stockSymbols.length !== 0) {
-  //     //Get Stock History from Alpaca
-  //     var alpacaStockMultiBarsURL = process.env.ALPACA_STOCK_URL;
-  //     var alpacaConfigs = {
-  //       headers: {
-  //         "Apca-Api-Key-Id": process.env.ALPACA_KEY,
-  //         "Apca-Api-Secret-Key": process.env.ALPACA_SECRET
-  //       },
-  //       params: {
-  //         'symbols': stockSymbols.toString(),
-  //         'timeframe': timeObj.timeFrame, //10Mins, 1Day, 1Week
-  //         'start': timeObj.startTime, //UTC Market Opening Hour (UTC)
-  //         'end': endDateFormated //UTC Market Closing Hour, 15 minutes gap
-  //       }
-  //     };
-  //     await axios.get(alpacaStockMultiBarsURL, alpacaConfigs)
-  //       .then((result) => {
-  //         historyData = result.data.bars;
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       })
-  //   };
-  //   if (cryptoSymbols.length !== 0) {
-  //     //Get Crypto History from Alpaca
-  //     var alpacaCryptoMultiBarsURL = process.env.ALPACA_CRYPTO_URL;
-  //     var alpacaConfigs = {
-  //       headers: {
-  //         "Apca-Api-Key-Id": process.env.ALPACA_KEY,
-  //         "Apca-Api-Secret-Key": process.env.ALPACA_SECRET
-  //       },
-  //       params: {
-  //         'symbols': cryptoSymbols.toString(),
-  //         'timeframe': timeObj.timeFrame, //10Mins, 1Day, 1Week
-  //         'start': timeObj.startTime, //UTC Market Opening Hour (UTC)
-  //         'end': endDateFormated //UTC Market Closing Hour, 15 minutes gap
-  //       }
-  //     };
-  //     await axios.get(alpacaCryptoMultiBarsURL, alpacaConfigs)
-  //       .then((result) => {
-  //         var weekendExcluded = portfolioHelper.excludeWeekend(result.data.bars);
-  //         historyData = { ...historyData, ...weekendExcluded };
-  //       })
-  //       .catch((err) => {
-  //         console.log(err);
-  //       })
-  //   };
-  //   var cleanAlpacaData = portfolioHelper.cleanAlpacaData(timeWindow, historyData);
-  //   var portfolioHistory;
-  //   await pool.query(getQueries.getPortfolioHistory(user_id, timeObj.sqlTF, timeWindow, todayDate))
-  //     .then((result) => {
-  //       portfolioHistory = result.rows;
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-
-  //   var cleanedPsqlData = portfolioHelper.cleanPsqlData(portfolioHistory);
-  //   var output = {};
-  //   output.alpaca = cleanAlpacaData;
-  //   output.history = cleanedPsqlData;
-  //   var result = portfolioHelper.getChartData(output);
-  //   console.log(result);
-  //   res.send(result);
-  // },
 
   getAllocationAndPosition : async (req, res) => {
     var user_id = req.query.user_id;
@@ -289,7 +160,7 @@ module.exports = {
   },
   //Transaction Routes
   getTransactions: (req, res) => {
-    pool.query(dbTransactions.dbGetTransactions(1))
+    pool.query(dbTransactions.dbGetTransactions(req.params.id))
       .then((result) => {
         res.send(result.rows);
       })
@@ -337,26 +208,33 @@ module.exports = {
   //Finances Routes
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
-    // pool.query()
-    // .then((result) => {
-    //   console.log(result);
-    //   res.end();
-    // })
-    // .catch((err) => {
-    //   console.log(err);
-    //   res.send(err);
-    // })
+    pool.query(dbFinances.dbPostFinance(req.body))
+    .then((result) => {
+      console.log(result);
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
   },
 
   getFinances: (req, res) => {
-    console.log(req.query, '=====req.query');
-    const text = `SELECT * FROM finances WHERE user_id = $1`;
-    const values = [req.query.user_id];
-    pool.query(text, values)
-      .then(result => {
-        res.send(result);
-      })
-      .catch(e => console.error(e.stack))
+    pool.query(dbFinances.dbGetFinances(req.params.id))
+    .then(result => {
+      res.send(result.rows);
+    })
+    .catch(e => console.error(e.stack))
+  },
+
+  getBalance: (req, res) => {
+    pool.query(dbFinances.dbGetBalance(req.params.id))
+    .then(result => {
+      res.send(result.rows);
+    })
+    .catch(err => {
+      console.log(err);
+    })
   },
 
   //LeaderBoard routes
@@ -407,15 +285,16 @@ module.exports = {
   },
 
   getUserDetail: async (req, res) => {
-    await pool.query(dbLeaderBoard.dbGetUserDetail(req.body.id))
-      .then((result) => {
-        console.log(result);
-        res.end();
-      })
-      .catch((err) => {
-        console.log(err);
-        res.send(err);
-      })
+    await pool.query(dbLeaderBoard.dbGetUserDetail(req.query.id))
+    .then((result) => {
+      console.log(result);
+      res.status(200).send(result.rows[0])
+      res.end();
+    })
+    .catch((err) => {
+      console.log(err);
+      res.send(err);
+    })
   },
 
   updatePicRUL: async (req, res) => {
