@@ -1,52 +1,109 @@
 const getQueries = {
-  getPortfolioHistory: (user_id, timeframe, timeWindow, todayDate) => {
+  getNetWorth: (user_id, timeWindow, todayDate) => {
     if (timeWindow === '1D') {
-      var query = `
-      WITH no_agg AS (
-        WITH no_weekd AS (
-          SELECT * FROM portfoliomins WHERE user_id = ${user_id}
+      // var query = `WITH no_array AS (
+      //   WITH markethr AS (
+      //     WITH match_id AS (
+      //       SELECT * FROM networth WHERE user_id = ${user_id}
+      //     )
+      //     SELECT * FROM match_id WHERE time >= '${todayDate} 13:30:00+00' AND time < '${todayDate} 19:59:59+00'
+      //     )
+      //   SELECT time_bucket('5 minutes', time) AS time, LAST(net, time) AS net FROM markethr GROUP BY time ORDER BY time
+      //   )
+      //   SELECT array_agg(n.time) AS time, array_agg(n.net) AS net
+      //   FROM no_array n
+      //   ;`;
+      // var query = `WITH no_array AS (
+      //   WITH markethr AS (
+      //     WITH match_id AS (
+      //       SELECT * FROM networth WHERE user_id = ${user_id}
+      //     )
+      //     SELECT * FROM match_id WHERE time >= now() - interval '1 day'
+      //     )
+      //   SELECT time_bucket('10 minutes', time) AS time, LAST(net, time) AS net FROM markethr GROUP BY time ORDER BY time
+      //   )
+      //   SELECT array_agg(n.time) AS time, array_agg(n.net) AS net
+      //   FROM no_array n
+      //   ;`;
+      var query = `WITH no_array AS (
+        WITH daily AS (
+          SELECT * FROM networth WHERE user_id = ${user_id} AND time >= now() - interval '1 day'
+          )
+          SELECT time_bucket('5 minutes', time) AS interval, LAST(net, time) AS net FROM daily GROUP BY interval ORDER BY interval ASC
         )
-        SELECT * FROM no_weekd WHERE time >= '${todayDate} 13:30:00+00' AND time < '${todayDate} 19:59:59+00'
-        )
-      SELECT t.symbol, array_agg(t.time) as time, array_agg(t.qty) as qty, array_agg(t.avg_cost) as avg_cost, array_agg(buy_pwr) as buy_pwr
-      FROM no_agg t
-      GROUP BY t.symbol;
-      `;
+        SELECT array_agg(n.interval) AS time, array_agg(n.net) AS net
+        FROM no_array n;`;
       return query;
-    } else if (timeWindow === '5Y') {
-      var query = `
-      WITH no_agg AS (
+    } else if (timeWindow === '1W') {
+      var query = `WITH no_array AS (
         WITH no_weekd AS (
-          SELECT * FROM portfolioweeks WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
+          SELECT * FROM networth WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
         )
-        SELECT * FROM no_weekd WHERE time > NOW() - INTERVAL '${timeframe}'
+        SELECT time_bucket('1 hour',time) AS interval, LAST(net, time)
+        FROM no_weekd WHERE time >= now() - interval '7.9 days'
+        GROUP BY interval ORDER BY interval ASC
         )
-      SELECT t.symbol, array_agg(t.time) as time, array_agg(t.qty) as qty, array_agg(t.avg_cost) as avg_cost, array_agg(buy_pwr) as buy_pwr
-      FROM no_agg t
-      GROUP BY t.symbol;
-      `;
+        SELECT array_agg(n.interval) as time, array_agg(n.last) as net
+        FROM no_array n
+        ;`;
+      return query;
+    } else if (timeWindow === '1M') {
+      var query = `WITH no_array AS (
+        WITH no_weekd AS (
+          SELECT * FROM networth WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
+        )
+        SELECT time_bucket('1 day',time) AS interval, LAST(net, time)
+        FROM no_weekd WHERE time >= now() - interval '1 month'
+        GROUP BY interval ORDER BY interval ASC
+        )
+        SELECT array_agg(n.interval) AS time, array_agg(n.last) AS net
+        FROM no_array n
+        ;`;
+      return query;
+    } else if (timeWindow === '3M') {
+      var query = `WITH no_array AS (
+        WITH no_weekd AS (
+          SELECT * FROM networth WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
+        )
+        SELECT time_bucket('1 day',time) AS interval, LAST(net, time)
+        FROM no_weekd WHERE time >= now() - interval '3 months'
+        GROUP BY interval ORDER BY interval ASC
+        )
+        SELECT array_agg(n.interval) AS time, array_agg(n.last) AS net
+        FROM no_array n
+        ;`;
+      return query;
+    } else if (timeWindow === '1Y') {
+      var query = `WITH no_array AS  (
+        WITH no_weekd AS (
+          SELECT * FROM networth WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
+        )
+        SELECT time_bucket('1 day',time) AS interval, LAST(net, time)
+        FROM no_weekd WHERE time >= now() - interval '1 year'
+        GROUP BY interval ORDER BY interval ASC
+        )
+        SELECT array_agg(n.interval) AS time, array_agg(n.last) AS net
+        FROM no_array n
+        ;`;
       return query;
     } else {
-      var query = `
-      WITH no_agg AS (
+      var query = `WITH no_array AS (
         WITH no_weekd AS (
-          SELECT * FROM portfoliodays WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
+          SELECT * FROM networth WHERE user_id = ${user_id} AND EXTRACT (isodow FROM time) BETWEEN 1 AND 5
         )
-        SELECT * FROM no_weekd WHERE time > NOW() - INTERVAL '${timeframe}'
+        SELECT time_bucket('1 week',time) AS interval, LAST(net, time)
+        FROM no_weekd WHERE time >= now() - interval '5 years'
+        GROUP BY interval ORDER BY interval ASC
         )
-      SELECT t.symbol, array_agg(t.time) as time, array_agg(t.qty) as qty, array_agg(t.avg_cost) as avg_cost, array_agg(buy_pwr) as buy_pwr
-      FROM no_agg t
-      GROUP BY t.symbol;
-      `;
+        SELECT array_agg(n.interval) AS time, array_agg(n.last) AS net
+        FROM no_array n
+        ;`;
       return query;
     }
   },
 
   getAvailBalance: (user_id) => {
-    var query = `SELECT
-    avail_balance
-    FROM finances
-    WHERE user_id = ${user_id} AND id = (SELECT MAX(id) FROM finances);`;
+    var query = `SELECT DISTINCT ON (user_id) f.avail_balance FROM finances f WHERE user_id = ${user_id} ORDER BY user_id, datetime desc;`;
     return query;
   },
 
@@ -61,6 +118,11 @@ const getQueries = {
     return query;
   },
 
+  getOldestTS: (user_id) => {
+    var query = `SELECT time From portfoliomins WHERE user_id = ${user_id} ORDER BY time ASC;`;
+    return query;
+  },
+
   getUsers: function (user_id) {
     var query = `SELECT * FROM users WHERE id = ${user_id};`;
     return query;
@@ -69,8 +131,4 @@ const getQueries = {
 
 module.exports = getQueries;
 
-// SELECT
-// i.user_id, i.symbol, i.type, i.qty, i.avg_cost, f.avail_balance AS buy_pwr FROM portfolioinstant i
-// LEFT JOIN finances f ON f.user_id = i.user_id
-// WHERE i.user_id = 1 AND id = (select max(id) from finances);
 
