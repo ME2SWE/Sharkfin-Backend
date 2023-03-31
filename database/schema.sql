@@ -106,11 +106,11 @@ COPY portfolioinstant (user_id, symbol, type, qty, avg_cost) FROM '/Users/saikit
 
 CREATE TABLE IF NOT EXISTS networth (
   user_id INTEGER REFERENCES users(id),
-  time TIMESTAMPTZ,
-  net DOUBLE PRECISION
+  time TIMESTAMPTZ NOT NULL,
+  net DOUBLE PRECISION NOT NULL
 );
 
-SELECT create_hypertable ('networth', 'time', migrate_data => TRUE);
+SELECT create_hypertable ('networth', 'time');
 
 COPY networth (user_id, time, net) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
 

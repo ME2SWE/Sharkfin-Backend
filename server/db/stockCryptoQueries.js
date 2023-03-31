@@ -10,7 +10,7 @@ const dbStockCrypto = {
     return queryString
   },
   checkUserPortfolioInstant: (user_id, symbol) => {
-    var queryString = `SELECT 1 FROM portfolioinstant WHERE user_id = ${user_id} AND symbol = '${symbol}';`
+    var queryString = `SELECT * FROM portfolioinstant WHERE user_id = ${user_id} AND symbol = '${symbol}';`
     //console.log(queryString)
     return queryString
   },

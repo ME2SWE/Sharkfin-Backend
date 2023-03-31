@@ -1,5 +1,5 @@
 module.exports = {
-  dataType: (orderObj) => {
+  dataType: async (orderObj) => {
 
     for (let key in orderObj.equity) {
       // find whole or float
@@ -29,8 +29,12 @@ module.exports = {
       }
 
     }
+    let newOrderObj = await calculateAvgCost(newOrderObj)
+    return newOrderObj
 
-    return orderObj
+  },
+  calculateAvgCost: (orderObj, currentAvgCost) => {
+    console.log(orderObj, currentAvgCost)
 
   }
 }
