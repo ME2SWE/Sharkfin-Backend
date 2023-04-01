@@ -31,8 +31,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- COPY users (id, username, firstname, lastname, email, profilepic_url)
 -- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
--- \copy users (id, username, firstname, lastname, email, profilepic_url)
--- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
+\copy users (id, username, firstname, lastname, email, profilepic_url)
+FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 -- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('mockData', 'H', 'Y', 'howardhyoon@gmail.com', 'www.photoURL.com');
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS friendlist (
 -- COPY friendlist (user_id,friend_id,status)
 -- FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
--- \COPY friendlist (user_id,friend_id,status)
--- FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
+\COPY friendlist (user_id,friend_id,status)
+FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO friendlist (user_id, friend_id, status) VALUES (1, 2, 'pending');
 
@@ -83,8 +83,8 @@ CREATE TABLE IF NOT EXISTS finances (
   datetime TIMESTAMP DEFAULT NOW()
 );
 
-COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime)
-FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime)
+-- FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
 
 \COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance)
 FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
@@ -100,8 +100,8 @@ CREATE TABLE IF NOT EXISTS performance (
   performance_percentage numeric(4,1) NOT NULL
 );
 
-COPY performance (user_id,performance_percentage)
-FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY performance (user_id,performance_percentage)
+-- FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
 
 \COPY performance (user_id,performance_percentage)
 FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
@@ -124,8 +124,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 
 -- INSERT INTO portfolioinstant (user_id, symbol, type, qty, avg_cost) values(1, 'MSFT', 'stock', 100, 150);
 
-COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
-FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+-- FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 \COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
 FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
@@ -136,10 +136,10 @@ CREATE TABLE IF NOT EXISTS networth (
   net DOUBLE PRECISION NOT NULL
 );
 
-SELECT create_hypertable ('"networth"', 'time');
-
 \COPY networth (user_id, time, net)
 FROM 'fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
+
+SELECT create_hypertable ('networth', 'time', migrate_data => TRUE);
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
 CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);
