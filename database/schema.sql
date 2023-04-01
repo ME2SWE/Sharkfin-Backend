@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- COPY users (id, username, firstname, lastname, email, profilepic_url)
 -- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
-COPY users (id,username, firstname, lastname, email, profilepic_URL) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
+COPY users (id,username, firstname, lastname, email, profilepic_URL) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
 -- \copy users (id, username, firstname, lastname, email, profilepic_url)
 -- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
@@ -47,8 +47,8 @@ CREATE TABLE IF NOT EXISTS friendlist (
   status status_type
 );
 
--- COPY friendlist (user_id,friend_id,status)
--- FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
+COPY friendlist (user_id,friend_id,status)
+FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
 -- \COPY friendlist (user_id,friend_id,status)
 -- FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
@@ -69,8 +69,8 @@ CREATE TABLE IF NOT EXISTS transactions (
 -- COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status)
 -- FROM 'fakeset/transactionsMock.csv' DELIMITER '*' CSV HEADER;
 
-\COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status)
-FROM 'fakeset/transactionsMock.csv' DELIMITER '*' CSV HEADER;
+-- \COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status)
+-- FROM 'fakeset/transactionsMock.csv' DELIMITER '*' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO transactions (user_id, type, stock_ticker, quantity, price, status) VALUES (1, 'buy', 'GOOG', 5, '52.11', 'complete');
 
@@ -84,11 +84,11 @@ CREATE TABLE IF NOT EXISTS finances (
   datetime TIMESTAMP DEFAULT NOW()
 );
 
-COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime)
-FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime)
+-- FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
 
-\COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance)
-FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
+-- \COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance)
+-- FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
 -- insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',0,1000,1000);
@@ -101,11 +101,11 @@ CREATE TABLE IF NOT EXISTS performance (
   performance_percentage numeric(4,1) NOT NULL
 );
 
-COPY performance (user_id,performance_percentage)
-FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY performance (user_id,performance_percentage)
+-- FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
 
-\COPY performance (user_id,performance_percentage)
-FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
+-- \COPY performance (user_id,performance_percentage)
+-- FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS chats (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -125,11 +125,11 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 
 -- INSERT INTO portfolioinstant (user_id, symbol, type, qty, avg_cost) values(1, 'MSFT', 'stock', 100, 150);
 
-COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
-FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+-- FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
 
-\COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
-FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- \COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+-- FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS networth (
   user_id INTEGER REFERENCES users(id),
@@ -137,10 +137,11 @@ CREATE TABLE IF NOT EXISTS networth (
   net DOUBLE PRECISION NOT NULL
 );
 
-COPY networth (user_id, time, net) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY networth (user_id, time, net) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
 
-\COPY networth (user_id, time, net)
-FROM 'fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
+
+-- \COPY networth (user_id, time, net)
+-- FROM 'fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
 CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);
@@ -155,6 +156,6 @@ CREATE INDEX idx_chats_sent_to ON chats(sent_to);
 SELECT setval('users_id_seq', COALESCE((SELECT MAX(id)+1 FROM users), 1), false);
 SELECT setval('transactions_id_seq', COALESCE((SELECT MAX(id)+1 FROM transactions), 1), false);
 
-GRANT ALL PRIVILEGES ON ALL TABLES in schema public to hruser;
-GRANT ALL PRIVILEGES ON ALL FUNCTIONS in schema public to hruser;
-GRANT ALL PRIVILEGES ON ALL SEQUENCES in schema public to hruser;
+-- GRANT ALL PRIVILEGES ON ALL TABLES in schema public to hruser;
+-- GRANT ALL PRIVILEGES ON ALL FUNCTIONS in schema public to hruser;
+-- GRANT ALL PRIVILEGES ON ALL SEQUENCES in schema public to hruser;
