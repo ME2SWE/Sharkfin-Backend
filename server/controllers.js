@@ -27,7 +27,7 @@ module.exports = {
         res.send(netWorth);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
   },
 
@@ -83,7 +83,7 @@ module.exports = {
               }
             })
             .catch((err) => {
-              console.log(err);
+              // console.log(err);
             })
           isDone = true;
           return;
@@ -93,7 +93,7 @@ module.exports = {
         }
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
     if (isDone) {
       return;
@@ -123,7 +123,7 @@ module.exports = {
           alpacaResults = result.data.bars;
         })
         .catch((err) => {
-          console.log(err);
+          // console.log(err);
         })
     };
     if (cryptoSymbols.length !== 0) {
@@ -158,7 +158,7 @@ module.exports = {
         res.status(200).send(allocationData);
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
       });
   },
   //Transaction Routes
@@ -196,6 +196,7 @@ module.exports = {
       })
   },
   postChat: (req, res) => {
+    console.log(req.body);
     pool.query(dbChats.dbPostChat(req.body))
       .then((result) => {
         res.end();
@@ -287,7 +288,7 @@ module.exports = {
         res.end();
       })
       .catch((err) => {
-        console.log(err);
+        // console.log(err);
         res.send(err);
       })
   },
