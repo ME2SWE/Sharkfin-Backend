@@ -31,9 +31,8 @@ CREATE TABLE IF NOT EXISTS users (
 -- COPY users (id, username, firstname, lastname, email, profilepic_url)
 -- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
-COPY users (id,username, firstname, lastname, email, profilepic_URL) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
--- \copy users (id, username, firstname, lastname, email, profilepic_url)
--- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
+\copy users (id, username, firstname, lastname, email, profilepic_url)
+FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 -- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('mockData', 'H', 'Y', 'howardhyoon@gmail.com', 'www.photoURL.com');
@@ -50,8 +49,8 @@ CREATE TABLE IF NOT EXISTS friendlist (
 COPY friendlist (user_id,friend_id,status)
 FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
--- \COPY friendlist (user_id,friend_id,status)
--- FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
+\COPY friendlist (user_id,friend_id,status)
+FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO friendlist (user_id, friend_id, status) VALUES (1, 2, 'pending');
 
@@ -137,11 +136,10 @@ CREATE TABLE IF NOT EXISTS networth (
   net DOUBLE PRECISION NOT NULL
 );
 
--- COPY networth (user_id, time, net) FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
+\COPY networth (user_id, time, net)
+FROM 'fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
 
-
--- \COPY networth (user_id, time, net)
--- FROM 'fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
+SELECT create_hypertable ('networth', 'time', migrate_data => TRUE);
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
 CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);
@@ -154,8 +152,3 @@ CREATE INDEX idx_chats_sent_from ON chats(sent_from);
 CREATE INDEX idx_chats_sent_to ON chats(sent_to);
 
 SELECT setval('users_id_seq', COALESCE((SELECT MAX(id)+1 FROM users), 1), false);
-SELECT setval('transactions_id_seq', COALESCE((SELECT MAX(id)+1 FROM transactions), 1), false);
-
--- GRANT ALL PRIVILEGES ON ALL TABLES in schema public to hruser;
--- GRANT ALL PRIVILEGES ON ALL FUNCTIONS in schema public to hruser;
--- GRANT ALL PRIVILEGES ON ALL SEQUENCES in schema public to hruser;

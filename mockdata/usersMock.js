@@ -6,7 +6,7 @@ const moment = require('moment');
 generateUsersMockData = () => {
   const data = [];
   // Loop through each time interval between start and end date
-  for (var x = 0; x < 100 ; x++) {
+  for (var x = 0; x < 20 ; x++) {
     var firstnameArr = [
       'Isabella', 'Cameron', 'Lydia', 'Caleb', 'Sophie', 'Liam', 'Elena', 'Nathan', 'Zoe', 'Samuel',
       'Aria', 'Lucas', 'Mia', 'Ethan', 'Hazel', 'Jacob', 'Chloe', 'Oliver', 'Lila', 'William',

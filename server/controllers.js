@@ -38,6 +38,8 @@ module.exports = {
     const todayDate = moment().format().slice(0, 10);
     var stockSymbols = [];
     var cryptoSymbols = [];
+    var startDateFormated;
+    var endDateFormated;
     if (today === 6) {
       var endDate = moment().subtract(1, 'days');
     } else if (today === 0) {
@@ -46,15 +48,18 @@ module.exports = {
       var endDate = moment().subtract(15, 'minutes');
     }
     if (endDate.hours() > 13 && endDate.minutes() > 0) { //
-      var startDateFormated = endDate.format().slice(0, 10) + 'T13:30:00Z';
-      var endDateFormated = endDate.format().slice(0, 10) + 'T19:59:59Z';
+      startDateFormated = endDate.format().slice(0, 10) + 'T13:30:00Z';
+      endDateFormated = endDate.format().slice(0, 10) + 'T19:59:59Z';
     } else {
-      var startDateFormated = endDate.subtract(5, 'minutes').utc().format();
-      var endDateFormated = endDate.utc().format();
+      // console.log(endDate);
+      var temp = moment(endDate);
+      startDateFormated = temp.subtract(10, 'minutes').utc().format();
+      endDateFormated = endDate.utc().format();
     }
     if (!user_id) {
       res.status(400);
     }
+    console.log('start:',startDateFormated, 'end:',endDateFormated);
     user_id = parseInt(user_id);
     if (user_id === 0) {
       res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
