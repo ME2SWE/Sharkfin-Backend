@@ -54,38 +54,35 @@ app.post('/updateFriendStatus', controllers.updateFriendStatus);
 app.post('/addFriend', controllers.addFriend);
 app.get('/getRecommendedFriends', controllers.getRecommendedFriends);
 
-//Get buying power and holding from portfolioinstant
-// app.get('/getAvailBalance', controllers.getAvailBalance)
+//Get holding from portfolioinstant (for crypto and stock)
 app.get('/getHoldingAmount', controllers.getHoldingAmount)
 
 //Update buying power and holding to portfolioinstant
-//app.put('/updateAssetData', controllers.updateAssetData)
+app.put('/updatePortfolioinstant', controllers.updatePortfolioinstant)
 
-// //Post order data to transaction
-// app.post('/postOrder', controllers.postOrder)
 
-setInterval(async function() {
+setInterval(async function () {
   var date = moment();
   var mins = date.minutes();
   var timestamp = date.format().slice(0, 19).replace('T', ' ');
   var hashMin = {
-    '00' : 1,
-    '10' : 1,
-    '20' : 1,
-    '30' : 1,
-    '40' : 1,
-    '50' : 1,
+    '00': 1,
+    '10': 1,
+    '20': 1,
+    '30': 1,
+    '40': 1,
+    '50': 1,
   };
 
   // if (mins in hashMin) {
-    await pool.query('WITH user_ids AS (SELECT DISTINCT id FROM users) SELECT array_agg(u.id) AS user_ids FROM user_ids u;')
+  await pool.query('WITH user_ids AS (SELECT DISTINCT id FROM users) SELECT array_agg(u.id) AS user_ids FROM user_ids u;')
     .then((result) => {
       var userIDs = result.rows[0].user_ids;
       for (var i = 0; i < userIDs.length; i++) {
         var user_id = userIDs[i];
         updateNetWorth.updateNetWorth(user_id);
       }
-      console.log('Net Worth Updated...It will be updated every 10 seconds');
+      // console.log('Net Worth Updated...It will be updated every 10 seconds');
     })
     .catch((err) => {
       console.log(err);

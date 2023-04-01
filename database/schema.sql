@@ -7,7 +7,7 @@
 -- \i ./home/ubuntu/Sharkfin-Backend/database/schema.sql
 -- to check if your tables are created properly you can run '\dt' to view all the tables
 
--- \c sharkfin
+\c sharkfin
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -31,6 +31,7 @@ CREATE TABLE IF NOT EXISTS users (
 -- COPY users (id, username, firstname, lastname, email, profilepic_url)
 -- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
+COPY users (id,username, firstname, lastname, email, profilepic_URL) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/userMock.csv' DELIMITER ',' CSV HEADER;
 -- \copy users (id, username, firstname, lastname, email, profilepic_url)
 -- FROM 'fakeset/userMock.csv' DELIMITER ',' CSV HEADER;
 
@@ -136,7 +137,7 @@ CREATE TABLE IF NOT EXISTS networth (
   net DOUBLE PRECISION NOT NULL
 );
 
-SELECT create_hypertable ('"networth"', 'time');
+COPY networth (user_id, time, net) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
 
 \COPY networth (user_id, time, net)
 FROM 'fakeset/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
@@ -152,3 +153,8 @@ CREATE INDEX idx_chats_sent_from ON chats(sent_from);
 CREATE INDEX idx_chats_sent_to ON chats(sent_to);
 
 SELECT setval('users_id_seq', COALESCE((SELECT MAX(id)+1 FROM users), 1), false);
+SELECT setval('transactions_id_seq', COALESCE((SELECT MAX(id)+1 FROM transactions), 1), false);
+
+GRANT ALL PRIVILEGES ON ALL TABLES in schema public to hruser;
+GRANT ALL PRIVILEGES ON ALL FUNCTIONS in schema public to hruser;
+GRANT ALL PRIVILEGES ON ALL SEQUENCES in schema public to hruser;

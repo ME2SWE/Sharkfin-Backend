@@ -8,6 +8,7 @@ const dbFinances = require('./db/financeQueries.js');
 const dbAccounts = require('./db/accountQueries.js');
 const dbLeaderBoard = require('./db/leaderboardQueries.js')
 const dbStockCrypto = require('./db/stockCryptoQueries.js')
+const orderHelper = require('./helper/orderHelper.js')
 const moment = require('moment');
 require('dotenv').config();
 
@@ -30,11 +31,11 @@ module.exports = {
       });
   },
 
-  getAllocationAndPosition : async (req, res) => {
+  getAllocationAndPosition: async (req, res) => {
     var user_id = req.query.user_id;
     var isDone = false;
     const today = moment().day();
-    const todayDate = moment().format().slice(0,10);
+    const todayDate = moment().format().slice(0, 10);
     var stockSymbols = [];
     var cryptoSymbols = [];
     if (today === 6) {
@@ -45,7 +46,7 @@ module.exports = {
       var endDate = moment().subtract(15, 'minutes');
     }
     if (endDate.hours() > 13 && endDate.minutes() > 0) { //
-      var startDateFormated = endDate.format().slice(0,10) + 'T13:30:00Z';
+      var startDateFormated = endDate.format().slice(0, 10) + 'T13:30:00Z';
       var endDateFormated = endDate.format().slice(0, 10) + 'T19:59:59Z';
     } else {
       var startDateFormated = endDate.subtract(5, 'minutes').utc().format();
@@ -56,7 +57,7 @@ module.exports = {
     }
     user_id = parseInt(user_id);
     if (user_id === 0) {
-      res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
+      res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
       return;
     }
     var alpacaMultiBarsURL = process.env.ALPACA_STOCK_URL;
@@ -71,29 +72,29 @@ module.exports = {
         WHERE user_id = ${user_id} AND type = 'crypto')
          AS cryptos;`;
     await pool.query(symbolQuery)
-    .then((result) => {
-      if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
-        pool.query(getQueries.getAvailBalance(user_id))
-        .then((result) => {
-          if (result.rows.length === 0) {
-            res.send({totalNetWorth: 0, position: [], allocation : {symbols: [], ratios: []}});
-          } else {
-            res.send({totalNetWorth: result.rows[0].avail_balance, position: [], allocation : {symbols: ['CASH'], ratios: [100]}});
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        })
-        isDone = true;
-        return;
-      } else {
-        stockSymbols = result.rows[0].stocks;
-        cryptoSymbols = result.rows[0].cryptos;
-      }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+      .then((result) => {
+        if (result.rows[0].stocks.length === 0 && result.rows[0].cryptos.length === 0) { //no stock nor crypto
+          pool.query(getQueries.getAvailBalance(user_id))
+            .then((result) => {
+              if (result.rows.length === 0) {
+                res.send({ totalNetWorth: 0, position: [], allocation: { symbols: [], ratios: [] } });
+              } else {
+                res.send({ totalNetWorth: result.rows[0].avail_balance, position: [], allocation: { symbols: ['CASH'], ratios: [100] } });
+              }
+            })
+            .catch((err) => {
+              console.log(err);
+            })
+          isDone = true;
+          return;
+        } else {
+          stockSymbols = result.rows[0].stocks;
+          cryptoSymbols = result.rows[0].cryptos;
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
     if (isDone) {
       return;
     };
@@ -118,6 +119,7 @@ module.exports = {
       };
       await axios.get(alpacaStockMultiBarsURL, alpacaConfigs)
         .then((result) => {
+
           alpacaResults = result.data.bars;
         })
         .catch((err) => {
@@ -146,6 +148,7 @@ module.exports = {
           console.log(err);
         })
     };
+
     var alloPosQuery = getQueries.getAlloPosQuery(user_id);
     await pool.query(alloPosQuery)
       .then((result) => {
@@ -173,7 +176,7 @@ module.exports = {
     // console.log(req.body);
     pool.query(dbTransactions.dbPostTransaction(req.body))
       .then((result) => {
-        console.log(result);
+        //console.log('transaction ', result);
         res.end();
       })
       .catch((err) => {
@@ -215,31 +218,31 @@ module.exports = {
   postFinances: (req, res) => {
     //TO-DO: call dbFinances.dbPostFinances
     pool.query(dbFinances.dbPostFinance(req.body))
-    .then((result) => {
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   getFinances: (req, res) => {
     pool.query(dbFinances.dbGetFinances(req.params.id))
-    .then(result => {
-      res.send(result.rows);
-    })
-    .catch(e => console.error(e.stack))
+      .then(result => {
+        res.send(result.rows);
+      })
+      .catch(e => console.error(e.stack))
   },
 
   getBalance: (req, res) => {
     pool.query(dbFinances.dbGetBalance(req.params.id))
-    .then(result => {
-      res.send(result.rows);
-    })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(result => {
+        res.send(result.rows);
+      })
+      .catch(err => {
+        console.log(err);
+      })
   },
 
   //LeaderBoard routes
@@ -280,7 +283,7 @@ module.exports = {
   updatePerformance: async (req, res) => {
     await pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
       .then((result) => {
-        console.log(result);
+        //console.log(result);
         res.end();
       })
       .catch((err) => {
@@ -291,21 +294,21 @@ module.exports = {
 
   getUserDetail: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetUserDetail(req.query.id))
-    .then((result) => {
-      console.log(result);
-      res.status(200).send(result.rows[0])
-      res.end();
-    })
-    .catch((err) => {
-      console.log(err);
-      res.send(err);
-    })
+      .then((result) => {
+        //console.log(result);
+        res.status(200).send(result.rows[0])
+        res.end();
+      })
+      .catch((err) => {
+        console.log(err);
+        res.send(err);
+      })
   },
 
   updatePicRUL: async (req, res) => {
     await pool.query(dbLeaderBoard.dbPostPicURL(req.body.id, req.body.url))
       .then((result) => {
-        console.log(result);
+        //console.log(result);
         res.end();
       })
       .catch((err) => {
@@ -505,10 +508,23 @@ module.exports = {
       })
   },
 
-  getAvailBalance: (req, res) => {
-    // console.log(req.query.userid)
+  // getAvailBalance: (req, res) => {
+  //   // console.log(req.query.userid)
+  //   var userid = req.query.userid
+  //   pool.query(dbStockCrypto.getAvailBalance(userid))
+  //     .then((result) => {
+  //       //console.log(result.rows)
+  //       res.send(result.rows);
+  //     })
+  //     .catch((err) => {
+  //       res.send(err);
+  //     })
+  // },
+  getHoldingAmount: (req, res) => {
+    //console.log(req.query)
     var userid = req.query.userid
-    pool.query(dbStockCrypto.getAvailBalance(userid))
+    var symbol = req.query.symbol
+    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
       .then((result) => {
         //console.log(result.rows)
         res.send(result.rows);
@@ -517,18 +533,77 @@ module.exports = {
         res.send(err);
       })
   },
-  getHoldingAmount: (req, res) => {
-    console.log(req.query)
-    var userid = req.query.userid
-    var symbol = req.query.symbol
-    pool.query(dbStockCrypto.getHoldingAmount(userid, symbol))
-      .then((result) => {
-        console.log(result.rows)
-        res.send(result.rows);
+  updatePortfolioinstant: async (req, res) => {
+    let preppedOrderObj = await orderHelper.dataType(req.body)
+    //console.log('prepped', preppedOrderObj)
+
+    await pool.query(dbStockCrypto.checkUserPortfolioInstant(preppedOrderObj.account, preppedOrderObj.symbol))
+      .then(async (result) => {
+        // console.log('what is result', result.rows[0])
+        // determine sell or buy
+        if (preppedOrderObj.orderType === 'buy') {
+          // buying no record
+          if (result.rowCount === 0) {
+            await pool.query(dbStockCrypto.insertPortfolioinstant(preppedOrderObj))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('inserted');
+                }
+              })
+          } else {
+            // buy has record
+            let oderObjwithAvgCost = await orderHelper.calculateAvgCost(preppedOrderObj, result.rows[0])
+            console.log('avgcost obj', oderObjwithAvgCost)
+            await pool.query(dbStockCrypto.updatePortfolioinstant(oderObjwithAvgCost))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('updated');
+                }
+              })
+          }
+        } else {
+          // has record, and has no holding after selling
+          if (result.rowCount === 1 && preppedOrderObj.newRemaining.holding === 0) {
+            await pool.query(dbStockCrypto.removeRecord(preppedOrderObj))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('deleted');
+                }
+              })
+          }
+          else {
+            await pool.query(dbStockCrypto.updatePortfolioinstantSell(preppedOrderObj))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('updated for sale');
+                }
+              })
+          }
+          // has no record should not be able to sell, should be handled by frontend
+
+        }
+
+      })
+      .then(async () => {
+        // update available balance
+
+        let newFinanceObj = {}
+        newFinanceObj.transaction_type = 'trade'
+        newFinanceObj.user_id = preppedOrderObj.account
+        newFinanceObj.amount = preppedOrderObj.equity.buyingPower
+        await pool.query(dbFinances.dbPostFinance(newFinanceObj))
+          .then((result) => {
+            if (result.rowCount === 1) {
+              console.log('inserted');
+            }
+            res.end();
+          })
       })
       .catch((err) => {
+        console.log('?', err)
         res.send(err);
       })
   }
 
 }
+
