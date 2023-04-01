@@ -14,6 +14,8 @@ module.exports = {
     const todayDate = moment().format().slice(0,10);
     var stockSymbols = [];
     var cryptoSymbols = [];
+    var startDateFormated;
+    var endDateFormated;
     if (today === 6) {
       var endDate = moment().subtract(1, 'days');
     } else if (today === 0) {
@@ -25,8 +27,9 @@ module.exports = {
       var startDateFormated = endDate.format().slice(0,10) + 'T13:30:00Z';
       var endDateFormated = endDate.format().slice(0, 10) + 'T19:59:59Z';
     } else {
-      var startDateFormated = endDate.subtract(5, 'minutes').utc().format();
-      var endDateFormated = endDate.utc().format();
+      var temp = moment(endDate);
+      startDateFormated = temp.subtract(10, 'minutes').utc().format();
+      endDateFormated = endDate.utc().format();
     }
     var alpacaMultiBarsURL = process.env.ALPACA_STOCK_URL;
     const symbolQuery = `SELECT ARRAY (

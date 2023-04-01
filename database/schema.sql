@@ -7,7 +7,7 @@
 -- \i ./home/ubuntu/Sharkfin-Backend/database/schema.sql
 -- to check if your tables are created properly you can run '\dt' to view all the tables
 
--- \c sharkfin
+\c sharkfin
 
 CREATE EXTENSION IF NOT EXISTS timescaledb;
 
@@ -46,8 +46,8 @@ CREATE TABLE IF NOT EXISTS friendlist (
   status status_type
 );
 
--- COPY friendlist (user_id,friend_id,status)
--- FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
+COPY friendlist (user_id,friend_id,status)
+FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
 
 \COPY friendlist (user_id,friend_id,status)
 FROM 'fakeset/friendlistMock.csv' DELIMITER ',' CSV HEADER;
@@ -68,8 +68,8 @@ CREATE TABLE IF NOT EXISTS transactions (
 -- COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status)
 -- FROM 'fakeset/transactionsMock.csv' DELIMITER '*' CSV HEADER;
 
-\COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status)
-FROM 'fakeset/transactionsMock.csv' DELIMITER '*' CSV HEADER;
+-- \COPY transactions (id,user_id,type,datetime,stock_ticker,quantity,price,status)
+-- FROM 'fakeset/transactionsMock.csv' DELIMITER '*' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO transactions (user_id, type, stock_ticker, quantity, price, status) VALUES (1, 'buy', 'GOOG', 5, '52.11', 'complete');
 
@@ -86,8 +86,8 @@ CREATE TABLE IF NOT EXISTS finances (
 -- COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance,datetime)
 -- FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
 
-\COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance)
-FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
+-- \COPY finances (user_id,transaction_type,amount,net_deposits,avail_balance)
+-- FROM 'fakeset/financeMock.csv' DELIMITER ',' CSV HEADER;
 
 -- EXAMPLE INSERT STATEMENT: INSERT INTO finances (user_id, transaction_type, amount, avail_balance) VALUES (1, 'bank', 1000, COALESCE((SELECT avail_balance FROM finances WHERE id = (SELECT MAX(id) FROM finances)), 0) + 1000);
 -- insert into finances ("user_id","transaction_type","amount","net_deposits","avail_balance") values (1,'bank',0,1000,1000);
@@ -103,8 +103,8 @@ CREATE TABLE IF NOT EXISTS performance (
 -- COPY performance (user_id,performance_percentage)
 -- FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
 
-\COPY performance (user_id,performance_percentage)
-FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
+-- \COPY performance (user_id,performance_percentage)
+-- FROM 'fakeset/performanceMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS chats (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -127,8 +127,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 -- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
 -- FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
 
-\COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
-FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- \COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+-- FROM 'fakeset/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS networth (
   user_id INTEGER REFERENCES users(id),
