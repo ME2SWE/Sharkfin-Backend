@@ -82,7 +82,7 @@ setInterval(async function () {
         var user_id = userIDs[i];
         updateNetWorth.updateNetWorth(user_id);
       }
-      console.log('Net Worth 10 Minutes Updated');
+      // console.log('Net Worth Updated...It will be updated every 10 seconds');
     })
     .catch((err) => {
       console.log(err);

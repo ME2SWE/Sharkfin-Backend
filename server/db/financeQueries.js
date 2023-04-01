@@ -2,6 +2,7 @@ const dbFinances = {
 
   dbPostFinance: (data) => {
     let query;
+    let amount = parseFloat(data.amount.toFixed(2))
     if (data.transaction_type === 'bank') {
       query = `INSERT INTO finances (user_id, transaction_type, amount, net_deposits, avail_balance)
       VALUES (${data.user_id}, '${data.transaction_type}', ${data.amount},
@@ -9,9 +10,9 @@ const dbFinances = {
       COALESCE((SELECT avail_balance FROM finances WHERE user_id = ${data.user_id} ORDER BY datetime DESC LIMIT 1), 0) + ${data.amount});`;
     } else {
       query = `INSERT INTO finances (user_id, transaction_type, amount, net_deposits, avail_balance)
-      VALUES (${data.user_id}, '${data.transaction_type}', ${data.amount},
+      VALUES (${data.user_id}, '${data.transaction_type}', ${amount},
       (SELECT net_deposits FROM finances WHERE user_id = ${data.user_id} ORDER BY datetime DESC LIMIT 1),
-      COALESCE((SELECT avail_balance FROM finances WHERE user_id = ${data.user_id} ORDER BY datetime DESC LIMIT 1), 0) + ${data.amount});`;
+      COALESCE((SELECT avail_balance FROM finances WHERE user_id = ${data.user_id} ORDER BY datetime DESC LIMIT 1), 0) + ${amount});`;
     }
     return query;
   },

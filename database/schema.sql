@@ -33,7 +33,7 @@ COPY users (id,username, firstname, lastname, email, profilepic_URL) FROM '/User
 -- EXAMPLE INSERT STATEMENT: INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser', 'Jac', 'Cho', 'jc@gmail.com', 'www.photoURL.com');
 -- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('mockData', 'H', 'Y', 'howardhyoon@gmail.com', 'www.photoURL.com');
 -- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('testuser1', 'H1', 'Y1', 'testing@gmail.com', 'www.photoURL.com');
--- INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('newUser', 'H2', 'Y2', 'hyoon8185@gmail.com', 'www.photoURL.com');
+INSERT INTO users (username, firstname, lastname, email, profilepic_URL) VALUES ('newUser', 'H2', 'Y2', 'hyoon8185@gmail.com', 'www.photoURL.com');
 
 CREATE TABLE IF NOT EXISTS friendlist (
   id SERIAL PRIMARY KEY NOT NULL,
@@ -101,8 +101,8 @@ CREATE TABLE IF NOT EXISTS portfolioinstant (
 );
 COPY portfolioinstant (user_id, symbol, type, qty, avg_cost) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 -- INSERT INTO (user_id, symbol, type, qty, avg_cost) values(5, 'MSFT', 'stock', 100, 1);
-COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
-FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
+-- COPY portfolioinstant(user_id, symbol, type, qty, avg_cost)
+-- FROM '/Users/jacinthechong/Hack Reactor/SEI2207/BOC-BlueTide/Sharkfin-Backend/instantMock.csv' DELIMITER ',' CSV HEADER;
 
 CREATE TABLE IF NOT EXISTS networth (
   user_id INTEGER REFERENCES users(id),
@@ -110,9 +110,9 @@ CREATE TABLE IF NOT EXISTS networth (
   net DOUBLE PRECISION NOT NULL
 );
 
-SELECT create_hypertable ('networth', 'time');
-
 COPY networth (user_id, time, net) FROM '/Users/saikitJK/HackReactor/BOC/Sharkfin-Backend/netMinutesMock.csv' DELIMITER ',' CSV HEADER;
+
+SELECT create_hypertable ('"networth"', 'time', migrate_data => TRUE);
 
 CREATE INDEX idx_friendlist_user_id ON friendlist(user_id);
 CREATE INDEX idx_friendlist_friend_id ON friendlist(friend_id);

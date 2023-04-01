@@ -119,6 +119,7 @@ module.exports = {
       };
       await axios.get(alpacaStockMultiBarsURL, alpacaConfigs)
         .then((result) => {
+
           alpacaResults = result.data.bars;
         })
         .catch((err) => {
@@ -147,6 +148,7 @@ module.exports = {
           console.log(err);
         })
     };
+
     var alloPosQuery = getQueries.getAlloPosQuery(user_id);
     await pool.query(alloPosQuery)
       .then((result) => {
@@ -281,7 +283,7 @@ module.exports = {
   updatePerformance: async (req, res) => {
     await pool.query(dbLeaderBoard.dbPostPerformance(req.body.id, req.body.percentage))
       .then((result) => {
-        console.log(result);
+        //console.log(result);
         res.end();
       })
       .catch((err) => {
@@ -293,7 +295,7 @@ module.exports = {
   getUserDetail: async (req, res) => {
     await pool.query(dbLeaderBoard.dbGetUserDetail(req.query.id))
       .then((result) => {
-        console.log(result);
+        //console.log(result);
         res.status(200).send(result.rows[0])
         res.end();
       })
@@ -306,7 +308,7 @@ module.exports = {
   updatePicRUL: async (req, res) => {
     await pool.query(dbLeaderBoard.dbPostPicURL(req.body.id, req.body.url))
       .then((result) => {
-        console.log(result);
+        //console.log(result);
         res.end();
       })
       .catch((err) => {
@@ -538,23 +540,49 @@ module.exports = {
     await pool.query(dbStockCrypto.checkUserPortfolioInstant(preppedOrderObj.account, preppedOrderObj.symbol))
       .then(async (result) => {
         // console.log('what is result', result.rows[0])
-        if (result.rowCount === 0) {
-          await pool.query(dbStockCrypto.insertPortfolioinstant(preppedOrderObj))
-            .then((result) => {
-              if (result.rowCount === 1) {
-                console.log('inserted');
-              }
-            })
+        // determine sell or buy
+        if (preppedOrderObj.orderType === 'buy') {
+          // buying no record
+          if (result.rowCount === 0) {
+            await pool.query(dbStockCrypto.insertPortfolioinstant(preppedOrderObj))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('inserted');
+                }
+              })
+          } else {
+            // buy has record
+            let oderObjwithAvgCost = await orderHelper.calculateAvgCost(preppedOrderObj, result.rows[0])
+            console.log('avgcost obj', oderObjwithAvgCost)
+            await pool.query(dbStockCrypto.updatePortfolioinstant(oderObjwithAvgCost))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('updated');
+                }
+              })
+          }
         } else {
-          let oderObjwithAvgCost = await orderHelper.calculateAvgCost(preppedOrderObj, result.rows[0])
-          console.log('avgcost obj', oderObjwithAvgCost)
-          await pool.query(dbStockCrypto.updatePortfolioinstant(oderObjwithAvgCost))
-            .then((result) => {
-              if (result.rowCount === 1) {
-                console.log('updated');
-              }
-            })
+          // has record, and has no holding after selling
+          if (result.rowCount === 1 && preppedOrderObj.newRemaining.holding === 0) {
+            await pool.query(dbStockCrypto.removeRecord(preppedOrderObj))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('deleted');
+                }
+              })
+          }
+          else {
+            await pool.query(dbStockCrypto.updatePortfolioinstantSell(preppedOrderObj))
+              .then((result) => {
+                if (result.rowCount === 1) {
+                  console.log('updated for sale');
+                }
+              })
+          }
+          // has no record should not be able to sell, should be handled by frontend
+
         }
+
       })
       .then(async () => {
         // update available balance
@@ -571,28 +599,6 @@ module.exports = {
             res.end();
           })
       })
-
-      // await pool.query(dbStockCrypto.updatePortfolioinstant(preppedOrderObj))
-      //   .then((result) => {
-      //     if (result.rowCount === 1) {
-      //       console.log('updated');
-      //     }
-      //   })
-      //   .then(async () => {
-      //     // update available balance
-
-      //     let newFinanceObj = {}
-      //     newFinanceObj.transaction_type = 'trade'
-      //     newFinanceObj.user_id = preppedOrderObj.account
-      //     newFinanceObj.amount = preppedOrderObj.equity.buyingPower
-      //     await pool.query(dbFinances.dbPostFinance(newFinanceObj))
-      //       .then((result) => {
-      //         if (result.rowCount === 1) {
-      //           console.log('inserted');
-      //         }
-      //         res.end();
-      //       })
-      //   })
       .catch((err) => {
         console.log('?', err)
         res.send(err);
