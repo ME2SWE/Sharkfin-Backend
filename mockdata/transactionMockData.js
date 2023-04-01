@@ -6,8 +6,8 @@ const moment = require('moment');
 generateTransactionMockData = () => {
   const data = [];
   // Loop through each time interval between start and end date
-  for (var x = 0; x < 200 ; x++) {
-    var user = Math.floor(Math.random() * (100 - 0) + 0);
+  for (var x = 0; x < 20 ; x++) {
+    var user = Math.floor(Math.random() * (20 - 0) + 1);
     var tradeTypeArr = ["buy", "sell"];
     var tradeIndex = Math.floor(Math.random() * 2);
     var stockArr = ['GOOG', 'TSLA', 'AAPL', 'WISH', 'PINS', 'NVO', 'ABT', 'MSFT', 'BAC', 'AMZN', 'INTC', 'SQ', 'AMD', 'NVDA', 'META', 'BTC-USD', 'ETH-USD', 'SHIB-USD'];

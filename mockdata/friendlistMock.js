@@ -6,13 +6,13 @@ const moment = require('moment');
 generateFriendListMockData = () => {
   const data = [];
   // Loop through each time interval between start and end date
-  for (var x = 0; x < 100 ; x++) {
+  for (var x = 0; x < 20 ; x++) {
     //ramdon number of friends
-    var friendsNum = Math.floor(Math.random() * 30) + 14;
+    var friendsNum = Math.floor(Math.random() * 10) + 1;
     const result = [];
     const usedNumbers = new Set();
-    while (result.length < friendsNum && usedNumbers.size < 100) {
-      const randomNumber = Math.floor(Math.random() * 100) + 1;
+    while (result.length < friendsNum && usedNumbers.size < 20) {
+      const randomNumber = Math.floor(Math.random() * 19) + 1;
       if (!usedNumbers.has(randomNumber)) {
         result.push(randomNumber);
         usedNumbers.add(randomNumber);
