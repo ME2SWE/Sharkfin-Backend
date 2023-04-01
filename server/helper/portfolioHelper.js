@@ -46,7 +46,7 @@ module.exports = {
       position.symbol = portfolioData[j].symbol;
       position.accountPer = parseFloat(currPer);
       position.qty = portfolioData[j].qty;
-      position.avgCost = parseFloat(portfolioData[j].avg_cost);
+      position.avgCost = parseFloat(portfolioData[j].avg_cost.toFixed(2));
       output.position.push(position);
       output.allocation.ratios.push(currPer);
     }
